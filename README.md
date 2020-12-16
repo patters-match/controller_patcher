@@ -18,25 +18,22 @@ You need to install all dependencies first!
 Install this static library into your wut folder via: 
 
 ```
-mkdir build && cd build
-cmake -DCMAKE_TOOLCHAIN_FILE=$WUT_ROOT/share/wut.toolchain.cmake -DCMAKE_INSTALL_PREFIX=$WUT_ROOT ../
 make install
 ```
 
 Link the application with
 
 ```
--lutilswut -lcontrollerpatcherwut
+-lcontrollerpatcher
 ```
 
 You also need to add the include path to your Makefile. Example:
 
 ```
-export INCLUDE	:= [...] -I$(WUT_ROOT)/include
+export INCLUDE	:= [...] -I$(WUT_ROOT)/usr/include
 ```
 
 # Dependencies
-- [libutils](https://github.com/Maschell/libutils/tree/wut) (WUT branch) for common functions.
 - [wut](https://github.com/decaf-emu/wut) (WUT branch) for common functions.
 
 # Example implementation

@@ -1,3 +1,5 @@
-build/*
+/lib
+/release
+/libcontrollerpatcher-1.0.0.tar.bz2
 libcontrollerpatcher.cbp
 libcontrollerpatcher.depend
