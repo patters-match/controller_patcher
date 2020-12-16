@@ -46,7 +46,7 @@ UDPClient::~UDPClient() {
         socketclose(sockfd);
     }
     if(HID_DEBUG) {
-        log_printf("UDPClient::~UDPClient(line %d): Thread has been closed\n",__LINE__);
+        log_printf("UDPClient::~UDPClient(line %d): Thread has been closed",__LINE__);
     }
 }
 

@@ -58,7 +58,7 @@ UDPServer::~UDPServer() {
         }
     }
     if(HID_DEBUG) {
-        DEBUG_FUNCTION_LINE("Thread has been closed\n");
+        DEBUG_FUNCTION_LINE("Thread has been closed");
     }
 
 
@@ -72,7 +72,7 @@ void UDPServer::StartUDPThread(UDPServer * server) {
             OSGetTitleID() == 0x00050000101c9b00 || //The Binding of Isaac: Rebirth EUR
             OSGetTitleID() == 0x00050000101a3c00) { //The Binding of Isaac: Rebirth USA
         priority = 10;
-        DEBUG_FUNCTION_LINE("This game needs higher thread priority. We set it to %d\n",priority);
+        DEBUG_FUNCTION_LINE("This game needs higher thread priority. We set it to %d",priority);
     }
     UDPServer::pThread = CThread::create(UDPServer::DoUDPThread, (void*)server, CThread::eAttributeAffCore2,priority);
     UDPServer::pThread->resumeThread();
@@ -80,7 +80,7 @@ void UDPServer::StartUDPThread(UDPServer * server) {
 
 BOOL UDPServer::cpyIncrementBufferOffset(void * target, void * source, int32_t * offset, int32_t typesize, int32_t maximum) {
     if(((int)*offset + typesize) > maximum) {
-        DEBUG_FUNCTION_LINE("Transfer error. Excepted %04X bytes, but only got %04X\n",(*offset + typesize),maximum);
+        DEBUG_FUNCTION_LINE("Transfer error. Excepted %04X bytes, but only got %04X",(*offset + typesize),maximum);
         return false;
     }
     memcpy(target,(void*)((uint32_t)source+(*offset)),typesize);
@@ -135,7 +135,7 @@ void UDPServer::DoUDPThreadInternal() {
                     if(!cpyIncrementBufferOffset((void *)&datasize,     (void *)buffer,&bufferoffset,sizeof(datasize),  n))continue;
                     uint8_t * databuffer = (uint8_t*) malloc(datasize * sizeof(uint8_t));
                     if(!databuffer) {
-                        DEBUG_FUNCTION_LINE("Allocating memory failed\n");
+                        DEBUG_FUNCTION_LINE("Allocating memory failed");
                         continue;
                     }
 
@@ -166,6 +166,6 @@ void UDPServer::DoUDPThreadInternal() {
         }
     }
     if(HID_DEBUG) {
-        DEBUG_FUNCTION_LINE("UDPServer Thread ended\n");
+        DEBUG_FUNCTION_LINE("UDPServer Thread ended");
     }
 }

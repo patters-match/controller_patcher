@@ -62,11 +62,11 @@ BOOL ConfigValues::setIfValueIsPreset(std::map<std::string,const uint8_t*> value
             keyslot == CONTRPS_VPAD_BUTTON_R_STICK_X ||
             keyslot == CONTRPS_VPAD_BUTTON_R_STICK_Y) {
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("This may be a predefined stick %s\n",possibleValue.c_str());
+            DEBUG_FUNCTION_LINE("This may be a predefined stick %s",possibleValue.c_str());
         }
         if((values_ = ConfigValues::getValuesStickPreset(possibleValue)) != NULL) {
             if(HID_DEBUG) {
-                DEBUG_FUNCTION_LINE("Found predefined stick!\n");
+                DEBUG_FUNCTION_LINE("Found predefined stick!");
             }
             config_controller[slot][keyslot][0] =                           values_[STICK_CONF_BYTE];       //CONTRPS_VPAD_BUTTON_L_STICK_X
             config_controller[slot][keyslot][1] =                           values_[STICK_CONF_DEFAULT];
@@ -105,11 +105,11 @@ int32_t ConfigValues::getPresetValueEx(std::string possibleString) {
     int32_t rightValue = -1;
     if((rightValue = getValueFromMap(gGamePadValuesToCONTRPSString,possibleString))!= -1) {
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("Used pre-defined VPAD_VALUE! \"%s\" is %d\n",possibleString.c_str(),rightValue);
+            DEBUG_FUNCTION_LINE("Used pre-defined VPAD_VALUE! \"%s\" is %d",possibleString.c_str(),rightValue);
         }
     } else if((rightValue = getValueFromMap(presetValues,possibleString))!= -1) {
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("Used pre-defined value! \"%s\" is %d\n",possibleString.c_str(),rightValue);
+            DEBUG_FUNCTION_LINE("Used pre-defined value! \"%s\" is %d",possibleString.c_str(),rightValue);
         }
     }
     return rightValue;

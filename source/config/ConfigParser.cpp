@@ -23,7 +23,7 @@
 
 ConfigParser::ConfigParser(std::string configData) {
     this->content = configData;
-    this->contentLines = StringTools::stringSplit(content, "\n");
+    this->contentLines = StringTools::stringSplit(content, "");
 
     if(contentLines.empty()) {
         return;
@@ -72,13 +72,13 @@ void ConfigParser::setSlot(uint16_t newSlot) {
 
 BOOL ConfigParser::Init() {
     if(contentLines.size() == 0) {
-        DEBUG_FUNCTION_LINE("File seems to be empty. Make sure to have a proper header\n");
+        DEBUG_FUNCTION_LINE("File seems to be empty. Make sure to have a proper header");
         return false;
     }
     const char * line = contentLines[0].c_str();
     int32_t len = strlen(line);
     if(len <= 4) {
-        DEBUG_FUNCTION_LINE("Header is too short.\n");
+        DEBUG_FUNCTION_LINE("Header is too short.");
         return false;
     }
     std::string identify;
@@ -86,28 +86,28 @@ BOOL ConfigParser::Init() {
     if(line[0] == '[' && line[len-1] == ']') {
         identify = contentLines[0].substr(1,len-2);
     } else {
-        DEBUG_FUNCTION_LINE("Not a proper config file!\n");
+        DEBUG_FUNCTION_LINE("Not a proper config file!");
         return false;
     }
 
     if(identify.compare("GAMEPAD") == 0) {
-        DEBUG_FUNCTION_LINE("Its a gamepad config file!\n");
+        DEBUG_FUNCTION_LINE("Its a gamepad config file!");
         setSlot(gGamePadSlot);
         setType(PARSE_GAMEPAD);
     } else if(identify.compare("MOUSE") == 0) {
-        DEBUG_FUNCTION_LINE("Its a mouse config file!\n");
+        DEBUG_FUNCTION_LINE("Its a mouse config file!");
         setSlot(gMouseSlot);
         setType(PARSE_MOUSE);
         this->vid = HID_MOUSE_VID;
         this->pid = HID_MOUSE_PID;
     } else if(identify.compare("KEYBOARD") == 0) {
-        DEBUG_FUNCTION_LINE("Its a keyboard config file!\n");
+        DEBUG_FUNCTION_LINE("Its a keyboard config file!");
         setSlot(gHID_SLOT_KEYBOARD);
         setType(PARSE_KEYBOARD);
         this->vid = HID_KEYBOARD_VID;
         this->pid = HID_KEYBOARD_PID;
     } else {
-        DEBUG_FUNCTION_LINE("Its a controller config file!\n");
+        DEBUG_FUNCTION_LINE("Its a controller config file!");
         setSlot(getSlotController(identify));
         setType(PARSE_CONTROLLER);
     }
@@ -123,28 +123,28 @@ BOOL ConfigParser::Init() {
 
 void ConfigParser::parseSingleLine(std::string line) {
     if(line.empty()) {
-        DEBUG_FUNCTION_LINE("Can't parse line. it's empty\n");
+        DEBUG_FUNCTION_LINE("Can't parse line. it's empty");
         return;
     }
     std::vector<std::string> cur_values = StringTools::stringSplit(line,"=");
     if(cur_values.size() != 2) {
         if(HID_DEBUG || cur_values.size() > 2) {
-            DEBUG_FUNCTION_LINE("Not a valid key=pair line %s\n",line.c_str());
+            DEBUG_FUNCTION_LINE("Not a valid key=pair line %s",line.c_str());
         }
         return;
     } else {
         uint16_t hid_slot = getSlot();
 
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("leftpart = \"%s\" \n",cur_values[0].c_str());
+            DEBUG_FUNCTION_LINE("leftpart = \"%s\" ",cur_values[0].c_str());
         }
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("rightpart = \"%s\" \n",cur_values[1].c_str());
+            DEBUG_FUNCTION_LINE("rightpart = \"%s\" ",cur_values[1].c_str());
         }
         int32_t keyslot =  -1;
 
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("Checking single value\n");
+            DEBUG_FUNCTION_LINE("Checking single value");
         }
         if(getType() == PARSE_GAMEPAD || getType() == PARSE_KEYBOARD) {
             keyslot = ConfigValues::getKeySlotGamePad(cur_values[0]);
@@ -155,7 +155,7 @@ void ConfigParser::parseSingleLine(std::string line) {
         }
         if(keyslot != -1) {
             if(HID_DEBUG) {
-                DEBUG_FUNCTION_LINE("Its a single value\n");
+                DEBUG_FUNCTION_LINE("Its a single value");
             }
             long rightValue = -1;
             BOOL valueSet = false;
@@ -164,7 +164,7 @@ void ConfigParser::parseSingleLine(std::string line) {
                 if((values_ = ConfigValues::getValuesStickPreset(cur_values[1])) != NULL) {
                     if(values_[STICK_CONF_MAGIC_VERSION] != STICK_CONF_MAGIC_VALUE)
                         if(HID_DEBUG) {
-                            DEBUG_FUNCTION_LINE("Settings preset DPAD MODE and Mask\n");
+                            DEBUG_FUNCTION_LINE("Settings preset DPAD MODE and Mask");
                         }
                     config_controller[hid_slot][CONTRPS_DPAD_MODE][0] = CONTROLLER_PATCHER_VALUE_SET;
                     config_controller[hid_slot][CONTRPS_DPAD_MODE][1] = values_[CONTRDPAD_MODE];
@@ -180,11 +180,11 @@ void ConfigParser::parseSingleLine(std::string line) {
                 if(getType() == PARSE_KEYBOARD) {
                     if((rightValue = ConfigValues::getPresetValuesKeyboard(cur_values[1]))!= -1) {
                         if(HID_DEBUG) {
-                            DEBUG_FUNCTION_LINE("Used pre-defined Keyboard! \"%s\" is %d\n",cur_values[1].c_str(),rightValue);
+                            DEBUG_FUNCTION_LINE("Used pre-defined Keyboard! \"%s\" is %d",cur_values[1].c_str(),rightValue);
                         }
                     } else {
                         if(HID_DEBUG) {
-                            DEBUG_FUNCTION_LINE("I need to parse %s\n",cur_values[1].c_str());
+                            DEBUG_FUNCTION_LINE("I need to parse %s",cur_values[1].c_str());
                         }
                         char * ptr;
                         rightValue = strtol(cur_values[1].c_str(),&ptr,16);
@@ -195,14 +195,14 @@ void ConfigParser::parseSingleLine(std::string line) {
                     if(getType() == PARSE_MOUSE) { //No parsing for the mouse
                         if(rightValue == -1) {
                             if(HID_DEBUG) {
-                                DEBUG_FUNCTION_LINE("Invalid mouse value, lets skip it %s\n",cur_values[1].c_str());
+                                DEBUG_FUNCTION_LINE("Invalid mouse value, lets skip it %s",cur_values[1].c_str());
                             }
                             return;
                         }
                     } else {
                         if(rightValue == -1) {
                             if(HID_DEBUG) {
-                                DEBUG_FUNCTION_LINE("I need to parse %s\n",cur_values[1].c_str());
+                                DEBUG_FUNCTION_LINE("I need to parse %s",cur_values[1].c_str());
                             }
                             char * ptr;
                             rightValue = strtol(cur_values[1].c_str(),&ptr,16);
@@ -210,7 +210,7 @@ void ConfigParser::parseSingleLine(std::string line) {
                     }
                 }
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("Setting value to %d\n",rightValue);
+                    DEBUG_FUNCTION_LINE("Setting value to %d",rightValue);
                 }
 
                 config_controller[hid_slot][keyslot][0] = CONTROLLER_PATCHER_VALUE_SET;
@@ -218,22 +218,22 @@ void ConfigParser::parseSingleLine(std::string line) {
             }
         } else {
             if(HID_DEBUG) {
-                DEBUG_FUNCTION_LINE("Check pair value\n");
+                DEBUG_FUNCTION_LINE("Check pair value");
             }
             keyslot = ConfigValues::getKeySlotDefaultPairedValue(cur_values[0]);
             if(keyslot != -1) {
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("Its a  pair value\n");
+                    DEBUG_FUNCTION_LINE("Its a  pair value");
                 }
 
                 if(!ConfigValues::getInstance()->setIfValueIsAControllerPreset(cur_values[1],getSlot(),keyslot)) {
                     if(HID_DEBUG) {
-                        DEBUG_FUNCTION_LINE("And its no preset\n");
+                        DEBUG_FUNCTION_LINE("And its no preset");
                     }
                     std::vector<std::string> rightvalues = StringTools::stringSplit(cur_values[1],",");
 
                     if(rightvalues.size() != 2) {
-                        DEBUG_FUNCTION_LINE("%d instead of 2 key=values pairs in line\n",rightvalues.size());
+                        DEBUG_FUNCTION_LINE("%d instead of 2 key=values pairs in line",rightvalues.size());
                         return;
                     }
 
@@ -244,15 +244,15 @@ void ConfigParser::parseSingleLine(std::string line) {
                     config_controller[hid_slot][keyslot][1] = secondValue;
 
                     if(HID_DEBUG) {
-                        DEBUG_FUNCTION_LINE("Set %02X,%02X\n",firstValue,secondValue);
+                        DEBUG_FUNCTION_LINE("Set %02X,%02X",firstValue,secondValue);
                     }
                 } else {
                     if(HID_DEBUG) {
-                        DEBUG_FUNCTION_LINE("Found preset value!!\n");
+                        DEBUG_FUNCTION_LINE("Found preset value!!");
                     }
                 }
             } else {
-                DEBUG_FUNCTION_LINE("The setting \"%s\" is unknown!\n",cur_values[0].c_str());
+                DEBUG_FUNCTION_LINE("The setting \"%s\" is unknown!",cur_values[0].c_str());
             }
         }
     }
@@ -270,13 +270,13 @@ BOOL ConfigParser::resetConfig() {
 
 int32_t  ConfigParser::getSlotController(std::string identify) {
     if(HID_DEBUG) {
-        DEBUG_FUNCTION_LINE("Getting Controller Slot\n");
+        DEBUG_FUNCTION_LINE("Getting Controller Slot");
     }
 
     std::vector<std::string> values = StringTools::stringSplit(identify,",");
 
     if(values.size() != 2) {
-        DEBUG_FUNCTION_LINE("You need to provide a VID and PID. e.g. \"[vid=0x451,pid=0x152]\". (%s)\n",identify.c_str());
+        DEBUG_FUNCTION_LINE("You need to provide a VID and PID. e.g. \"[vid=0x451,pid=0x152]\". (%s)",identify.c_str());
         return HID_INVALID_SLOT;
     }
 
@@ -288,7 +288,7 @@ int32_t  ConfigParser::getSlotController(std::string identify) {
     if(pid < 0) {
         return HID_INVALID_SLOT;
     }
-    DEBUG_FUNCTION_LINE("VID: %04x PID: %04x\n",vid,pid);
+    DEBUG_FUNCTION_LINE("VID: %04x PID: %04x",vid,pid);
 
     this->vid = vid;
     this->pid = pid;
@@ -301,7 +301,7 @@ int32_t  ConfigParser::getSlotController(std::string identify) {
     int32_t hid = 0;
     if(result < 0) {
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("Its a new controller, lets save it\n");
+            DEBUG_FUNCTION_LINE("Its a new controller, lets save it");
         }
 
         HIDSlotData slotdata;
@@ -311,11 +311,11 @@ int32_t  ConfigParser::getSlotController(std::string identify) {
         hid = slotdata.hidmask;
 
         if(slot >= gHIDMaxDevices) {
-            DEBUG_FUNCTION_LINE("We don't a space for a new controller, please delete .inis\n");
+            DEBUG_FUNCTION_LINE("We don't a space for a new controller, please delete .inis");
             return HID_INVALID_SLOT;
         }
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("Got new slot! slot: %d hid %s .. Lets registrate it!\n",slot,StringTools::byte_to_binary(hid));
+            DEBUG_FUNCTION_LINE("Got new slot! slot: %d hid %s .. Lets registrate it!",slot,StringTools::byte_to_binary(hid));
         }
         config_controller[slot][CONTRPS_VID][0] = (vid & 0xFF00) >> 8;
         config_controller[slot][CONTRPS_VID][1] = (vid & 0x00FF);
@@ -323,64 +323,64 @@ int32_t  ConfigParser::getSlotController(std::string identify) {
         config_controller[slot][CONTRPS_PID][1] = (pid & 0x00FF);
 
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("Saved vid: %04X pid: %04X\n",
+            DEBUG_FUNCTION_LINE("Saved vid: %04X pid: %04X",
                                 config_controller[slot][CONTRPS_VID][0] * 0x100 + config_controller[slot][CONTRPS_VID][1],
                                 config_controller[slot][CONTRPS_PID][0] * 0x100 + config_controller[slot][CONTRPS_PID][1]);
         }
 
         config_controller_hidmask[slot] =  hid;
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("Saved the hid\n");
+            DEBUG_FUNCTION_LINE("Saved the hid");
         }
 
     } else {
         if(slot < gHIDMaxDevices) {
             hid = config_controller_hidmask[slot];
             if(HID_DEBUG) {
-                DEBUG_FUNCTION_LINE(">>>>>> found slot %d (hid:%s). Modifing existing data <<<<<<<<\n",slot,StringTools::byte_to_binary(hid));
+                DEBUG_FUNCTION_LINE(">>>>>> found slot %d (hid:%s). Modifing existing data <<<<<<<<",slot,StringTools::byte_to_binary(hid));
             }
-            DEBUG_FUNCTION_LINE("We already have data of this controller, lets modify it\n");
+            DEBUG_FUNCTION_LINE("We already have data of this controller, lets modify it");
         } else {
-            DEBUG_FUNCTION_LINE("Something really odd happend to the slots. %d is bigger then max (%d)\n",slot,gHIDMaxDevices);
+            DEBUG_FUNCTION_LINE("Something really odd happend to the slots. %d is bigger then max (%d)",slot,gHIDMaxDevices);
             return HID_INVALID_SLOT;
         }
     }
 
-    DEBUG_FUNCTION_LINE("using slot: %d hid %08X\n",slot,hid);
+    DEBUG_FUNCTION_LINE("using slot: %d hid %08X",slot,hid);
     return slot;
 }
 
 BOOL ConfigParser::parseIni() {
     if(getSlot() == HID_INVALID_SLOT) {
-        DEBUG_FUNCTION_LINE("Couldn't parse file. Not a valid slot. Probably broken config. Or you tried to have more than %d devices\n",getType(),gHIDMaxDevices);
+        DEBUG_FUNCTION_LINE("Couldn't parse file. Not a valid slot. Probably broken config. Or you tried to have more than %d devices",getType(),gHIDMaxDevices);
         return false;
     }
 
 
     if(HID_DEBUG) {
-        DEBUG_FUNCTION_LINE("Parsing content, type %d\n",getType());
+        DEBUG_FUNCTION_LINE("Parsing content, type %d",getType());
     }
 
     int32_t start = 1;
     if(contentLines.size() <= 1) {
-        DEBUG_FUNCTION_LINE("File only contains a header.\n");
+        DEBUG_FUNCTION_LINE("File only contains a header.");
         return false;
     }
     if(contentLines[1].compare("[IGNOREDEFAULT]") == 0) {
         resetConfig();
-        DEBUG_FUNCTION_LINE("Ignoring existing settings of this device\n");
+        DEBUG_FUNCTION_LINE("Ignoring existing settings of this device");
         start++;
     }
 
     for(uint32_t i = start; i < contentLines.size(); i++) {
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("line %d: \"%s\" \n",(i+1),contentLines[i].c_str());
+            DEBUG_FUNCTION_LINE("line %d: \"%s\" ",(i+1),contentLines[i].c_str());
         }
         parseSingleLine(contentLines[i]);
     }
 
     if(HID_DEBUG) {
-        DEBUG_FUNCTION_LINE("Parsing of the file is done.\n");
+        DEBUG_FUNCTION_LINE("Parsing of the file is done.");
     }
     return true;
 }
@@ -389,7 +389,7 @@ int32_t ConfigParser::getValueFromKeyValue(std::string value_pair,std::string ex
     std::vector<std::string> string_value = StringTools::stringSplit(value_pair,delimiter);
     if(string_value.size() != 2) {
         if(HID_DEBUG || string_value.size() > 2) {
-            DEBUG_FUNCTION_LINE("Not a valid key=pair line %s\n",value_pair.c_str());
+            DEBUG_FUNCTION_LINE("Not a valid key=pair line %s",value_pair.c_str());
         }
         return -1;
     }

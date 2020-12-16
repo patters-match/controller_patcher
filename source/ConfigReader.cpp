@@ -45,7 +45,7 @@ BOOL ConfigReader::ReadConfigs(std::string path) {
 
     if(fileList.size() > 0) {
         if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("Found %d config files\n",fileList.size());
+            DEBUG_FUNCTION_LINE("Found %d config files",fileList.size());
         }
         processFileList(fileList);
     }
@@ -55,7 +55,7 @@ BOOL ConfigReader::ReadConfigs(std::string path) {
 
 ConfigReader::~ConfigReader() {
     if(HID_DEBUG) {
-        DEBUG_FUNCTION_LINE("~ConfigReader\n");
+        DEBUG_FUNCTION_LINE("~ConfigReader");
     }
 }
 
@@ -65,7 +65,7 @@ std::vector<std::string> ConfigReader::ScanFolder(std::string path) {
     struct dirent *dirent = NULL;
     DIR *dirHandle = opendir(path.c_str());
     if (dirHandle == NULL) {
-        DEBUG_FUNCTION_LINE("Failed to open dir %s\n",path.c_str());
+        DEBUG_FUNCTION_LINE("Failed to open dir %s",path.c_str());
         config_files.push_back("ERROR"); //TODO: Find a proper solution
         return config_files;
     }
@@ -82,7 +82,7 @@ std::vector<std::string> ConfigReader::ScanFolder(std::string path) {
         if(!isDir && StringTools::EndsWith(std::string(filename),".ini")) {
             config_files.push_back(newPath);
             if(HID_DEBUG) {
-                DEBUG_FUNCTION_LINE("Found ini: %s \n",newPath.c_str());
+                DEBUG_FUNCTION_LINE("Found ini: %s ",newPath.c_str());
             }
         }
     }
@@ -92,7 +92,7 @@ std::vector<std::string> ConfigReader::ScanFolder(std::string path) {
 
 void ConfigReader::processFileList(std::vector<std::string> path) {
     for(std::vector<std::string>::iterator it = path.begin(); it != path.end(); ++it) {
-        DEBUG_FUNCTION_LINE("Reading %s\n",it->c_str());
+        DEBUG_FUNCTION_LINE("Reading %s",it->c_str());
         std::string result = loadFileToString(*it);
 
         ConfigParser parser(result);

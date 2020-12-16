@@ -34,16 +34,16 @@ CPTCPServer::~CPTCPServer() {
 void CPTCPServer::AttachDetach(HIDAttachEvent attach) {
     if(HID_DEBUG) {
         if(attach) {
-            DEBUG_FUNCTION_LINE("Network Attach\n");
+            DEBUG_FUNCTION_LINE("Network Attach");
         } else {
-            DEBUG_FUNCTION_LINE("Network Detach\n");
+            DEBUG_FUNCTION_LINE("Network Detach");
         }
     }
 
     for(int32_t i= 0; i< gHIDMaxDevices; i++) {
         for(int32_t j= 0; j< HID_MAX_PADS_COUNT; j++) {
             if(gNetworkController[i][j][NETWORK_CONTROLLER_ACTIVE] > 0) {
-                DEBUG_FUNCTION_LINE("Found a registered pad in deviceslot %d and padslot %d! Lets detach it.\n",i,j);
+                DEBUG_FUNCTION_LINE("Found a registered pad in deviceslot %d and padslot %d! Lets detach it.",i,j);
                 HIDDevice device;
                 memset(&device,0,sizeof(device));
 
@@ -60,9 +60,9 @@ void CPTCPServer::AttachDetach(HIDAttachEvent attach) {
 
     if(HID_DEBUG) {
         if(attach) {
-            DEBUG_FUNCTION_LINE("Network Attach DONE!\n");
+            DEBUG_FUNCTION_LINE("Network Attach DONE!");
         } else {
-            DEBUG_FUNCTION_LINE("Network Detach DONE!\n");
+            DEBUG_FUNCTION_LINE("Network Detach DONE!");
         }
     }
 }
@@ -87,37 +87,37 @@ BOOL CPTCPServer::whileLoop() {
             OSSleepTicks(OSMicrosecondsToTicks(1000));
             continue;
         }
-        //DEBUG_FUNCTION_LINE("got byte from tcp! %01X\n",ret);
+        //DEBUG_FUNCTION_LINE("got byte from tcp! %01X",ret);
         switch (ret) {
         case WIIU_CP_TCP_ATTACH: { /*attach */
             if(gUsedProtocolVersion >= WIIU_CP_TCP_HANDSHAKE_VERSION_1) {
                 int32_t handle;
                 ret = recvwait(clientfd, &handle, 4);
                 if(ret < 0) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: recvwait handle\n",WIIU_CP_TCP_ATTACH);
+                    DEBUG_FUNCTION_LINE("Error in %02X: recvwait handle",WIIU_CP_TCP_ATTACH);
                     return false;
                 }
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("got handle %d\n",handle);
+                    DEBUG_FUNCTION_LINE("got handle %d",handle);
                 }
                 uint16_t vid = 0;
                 uint16_t pid = 0;
                 ret = recvwait(clientfd, &vid, 2);
                 if(ret < 0) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: recvwait vid\n",WIIU_CP_TCP_ATTACH);
+                    DEBUG_FUNCTION_LINE("Error in %02X: recvwait vid",WIIU_CP_TCP_ATTACH);
                     return false;
                 }
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("got vid %04X\n",vid);
+                    DEBUG_FUNCTION_LINE("got vid %04X",vid);
                 }
 
                 ret = recvwait(clientfd, &pid, 2);
                 if(ret < 0) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: recvwait pid\n",WIIU_CP_TCP_ATTACH);
+                    DEBUG_FUNCTION_LINE("Error in %02X: recvwait pid",WIIU_CP_TCP_ATTACH);
                     return false;
                 }
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("got pid %04X\n",pid);
+                    DEBUG_FUNCTION_LINE("got pid %04X",pid);
                 }
                 HIDDevice device;
                 memset(&device,0,sizeof(device));
@@ -130,37 +130,37 @@ BOOL CPTCPServer::whileLoop() {
                 my_cb_user * user  = NULL;
                 ControllerPatcherHID::externAttachDetachCallback(&device,HID_DEVICE_ATTACH);
                 if((ret = ControllerPatcherUtils::getDataByHandle(handle,&user)) < 0) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: getDataByHandle(%d,%08X).\n",WIIU_CP_TCP_ATTACH,handle,&user);
-                    DEBUG_FUNCTION_LINE("Error in %02X: Config for the controller is missing.\n",WIIU_CP_TCP_ATTACH);
+                    DEBUG_FUNCTION_LINE("Error in %02X: getDataByHandle(%d,%08X).",WIIU_CP_TCP_ATTACH,handle,&user);
+                    DEBUG_FUNCTION_LINE("Error in %02X: Config for the controller is missing.",WIIU_CP_TCP_ATTACH);
                     if((ret = sendbyte(clientfd, WIIU_CP_TCP_ATTACH_CONFIG_NOT_FOUND) < 0)) {
-                        DEBUG_FUNCTION_LINE("Error in %02X: Sending the WIIU_CP_TCP_ATTACH_CONFIG_NOT_FOUND byte failed. Error: %d.\n",WIIU_CP_TCP_ATTACH,ret);
+                        DEBUG_FUNCTION_LINE("Error in %02X: Sending the WIIU_CP_TCP_ATTACH_CONFIG_NOT_FOUND byte failed. Error: %d.",WIIU_CP_TCP_ATTACH,ret);
                     }
                     return false;
                 }
                 if((ret = sendbyte(clientfd, WIIU_CP_TCP_ATTACH_CONFIG_FOUND) < 0)) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: Sending the WIIU_CP_TCP_ATTACH_CONFIG_FOUND byte failed. Error: %d.\n",WIIU_CP_TCP_ATTACH,ret);
+                    DEBUG_FUNCTION_LINE("Error in %02X: Sending the WIIU_CP_TCP_ATTACH_CONFIG_FOUND byte failed. Error: %d.",WIIU_CP_TCP_ATTACH,ret);
                     return false;
                 }
                 if(user != NULL) {
                     if((ret = sendbyte(clientfd, WIIU_CP_TCP_ATTACH_USER_DATA_OKAY) < 0)) {
-                        DEBUG_FUNCTION_LINE("Error in %02X: Sending the WIIU_CP_TCP_ATTACH_USER_DATA_OKAY byte failed. Error: %d.\n",WIIU_CP_TCP_ATTACH,ret);
+                        DEBUG_FUNCTION_LINE("Error in %02X: Sending the WIIU_CP_TCP_ATTACH_USER_DATA_OKAY byte failed. Error: %d.",WIIU_CP_TCP_ATTACH,ret);
                         return false;
                     }
 
                     ret = sendwait(clientfd,&user->slotdata.deviceslot,2);
                     if(ret < 0) {
-                        DEBUG_FUNCTION_LINE("Error in %02X: sendwait slotdata: %04X\n",WIIU_CP_TCP_ATTACH,user->slotdata.deviceslot);
+                        DEBUG_FUNCTION_LINE("Error in %02X: sendwait slotdata: %04X",WIIU_CP_TCP_ATTACH,user->slotdata.deviceslot);
                         return false;
                     }
                     ret = sendwait(clientfd,&user->pad_slot,1);
                     if(ret < 0) {
-                        DEBUG_FUNCTION_LINE("Error in %02X: sendwait pad_slot: %04X\n",WIIU_CP_TCP_ATTACH,user->pad_slot);
+                        DEBUG_FUNCTION_LINE("Error in %02X: sendwait pad_slot: %04X",WIIU_CP_TCP_ATTACH,user->pad_slot);
                         return false;
                     }
                 } else {
-                    DEBUG_FUNCTION_LINE("Error in %02X: invalid user data.\n",WIIU_CP_TCP_ATTACH);
+                    DEBUG_FUNCTION_LINE("Error in %02X: invalid user data.",WIIU_CP_TCP_ATTACH);
                     if((ret = sendbyte(clientfd, WIIU_CP_TCP_ATTACH_USER_DATA_BAD) < 0)) {
-                        DEBUG_FUNCTION_LINE("Error in %02X: Sending the WIIU_CP_TCP_ATTACH_USER_DATA_BAD byte failed. Error: %d.\n",WIIU_CP_TCP_ATTACH,ret);
+                        DEBUG_FUNCTION_LINE("Error in %02X: Sending the WIIU_CP_TCP_ATTACH_USER_DATA_BAD byte failed. Error: %d.",WIIU_CP_TCP_ATTACH,ret);
                         return false;
                     }
                     return false;
@@ -168,7 +168,7 @@ BOOL CPTCPServer::whileLoop() {
                 }
 
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("attachted to device slot: %d , pad slot is: %d\n",user->slotdata.deviceslot,user->pad_slot);
+                    DEBUG_FUNCTION_LINE("attachted to device slot: %d , pad slot is: %d",user->slotdata.deviceslot,user->pad_slot);
                 }
 
                 gNetworkController[user->slotdata.deviceslot][user->pad_slot][NETWORK_CONTROLLER_VID] = device.vid;
@@ -177,7 +177,7 @@ BOOL CPTCPServer::whileLoop() {
                 gNetworkController[user->slotdata.deviceslot][user->pad_slot][NETWORK_CONTROLLER_HANDLE] = handle;
 
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("handle %d connected! vid: %02X pid: %02X deviceslot %d, padslot %d\n",handle,vid,pid,user->slotdata.deviceslot,user->pad_slot);
+                    DEBUG_FUNCTION_LINE("handle %d connected! vid: %02X pid: %02X deviceslot %d, padslot %d",handle,vid,pid,user->slotdata.deviceslot,user->pad_slot);
                 }
                 break;
             }
@@ -188,34 +188,34 @@ BOOL CPTCPServer::whileLoop() {
                 int32_t handle;
                 ret = recvwait(clientfd, &handle, 4);
                 if(ret < 0) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: recvwait handle\n",WIIU_CP_TCP_DETACH);
+                    DEBUG_FUNCTION_LINE("Error in %02X: recvwait handle",WIIU_CP_TCP_DETACH);
                     return false;
                     break;
                 }
 
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("got detach for handle: %d\n",handle);
+                    DEBUG_FUNCTION_LINE("got detach for handle: %d",handle);
                 }
                 my_cb_user * user  = NULL;
                 if(ControllerPatcherUtils::getDataByHandle(handle,&user) < 0) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: getDataByHandle(%d,%08X).\n",WIIU_CP_TCP_DETACH,handle,&user);
+                    DEBUG_FUNCTION_LINE("Error in %02X: getDataByHandle(%d,%08X).",WIIU_CP_TCP_DETACH,handle,&user);
                     return false;
                     break;
                 }
                 if(user == NULL) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: invalid user data.\n",WIIU_CP_TCP_DETACH);
+                    DEBUG_FUNCTION_LINE("Error in %02X: invalid user data.",WIIU_CP_TCP_DETACH);
                     return false;
                     break;
                 }
                 int32_t deviceslot = user->slotdata.deviceslot;
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("device slot is: %d , pad slot is: %d\n",deviceslot,user->pad_slot);
+                    DEBUG_FUNCTION_LINE("device slot is: %d , pad slot is: %d",deviceslot,user->pad_slot);
                 }
 
                 DeviceVIDPIDInfo vidpid;
                 int32_t result;
                 if((result = ControllerPatcherUtils::getVIDPIDbyDeviceSlot(deviceslot,&vidpid)) < 0) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: Couldn't find a valid VID/PID for device slot %d. Error: %d\n",WIIU_CP_TCP_DETACH,deviceslot,ret);
+                    DEBUG_FUNCTION_LINE("Error in %02X: Couldn't find a valid VID/PID for device slot %d. Error: %d",WIIU_CP_TCP_DETACH,deviceslot,ret);
                     return false;
                     break;
                 }
@@ -231,7 +231,7 @@ BOOL CPTCPServer::whileLoop() {
                 ControllerPatcherHID::externAttachDetachCallback(&device,HID_DEVICE_DETACH);
                 memset(gNetworkController[deviceslot][user->pad_slot],0,sizeof(gNetworkController[deviceslot][user->pad_slot]));
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("handle %d disconnected!\n",handle);
+                    DEBUG_FUNCTION_LINE("handle %d disconnected!",handle);
                 }
                 break;
             }
@@ -240,11 +240,11 @@ BOOL CPTCPServer::whileLoop() {
         case WIIU_CP_TCP_PING: { /*ping*/
             if(gUsedProtocolVersion >= WIIU_CP_TCP_HANDSHAKE_VERSION_1) {
                 if(HID_DEBUG) {
-                    DEBUG_FUNCTION_LINE("Got Ping, sending now a Pong\n");
+                    DEBUG_FUNCTION_LINE("Got Ping, sending now a Pong");
                 }
                 int32_t ret = sendbyte(clientfd, WIIU_CP_TCP_PONG);
                 if(ret < 0) {
-                    DEBUG_FUNCTION_LINE("Error in %02X: sendbyte PONG\n");
+                    DEBUG_FUNCTION_LINE("Error in %02X: sendbyte PONG");
                     return false;
                 }
 
@@ -262,7 +262,7 @@ BOOL CPTCPServer::whileLoop() {
 
 BOOL CPTCPServer::acceptConnection() {
     int32_t clientfd = getClientFD();
-    DEBUG_FUNCTION_LINE("TCP Connection accepted! Sending my protocol version: %d (0x%02X)\n", (WIIU_CP_TCP_HANDSHAKE - WIIU_CP_TCP_HANDSHAKE_VERSION_1)+1,WIIU_CP_TCP_HANDSHAKE);
+    DEBUG_FUNCTION_LINE("TCP Connection accepted! Sending my protocol version: %d (0x%02X)", (WIIU_CP_TCP_HANDSHAKE - WIIU_CP_TCP_HANDSHAKE_VERSION_1)+1,WIIU_CP_TCP_HANDSHAKE);
 
     gUDPClientip = getSockAddr().sin_addr.s_addr;
     UDPClient::createInstance();
@@ -270,38 +270,38 @@ BOOL CPTCPServer::acceptConnection() {
     int32_t ret;
     ret = sendbyte(clientfd, WIIU_CP_TCP_HANDSHAKE); //Hey I'm a WiiU console!
     if(ret < 0) {
-        DEBUG_FUNCTION_LINE("Error sendbyte: %02X\n",WIIU_CP_TCP_HANDSHAKE);
+        DEBUG_FUNCTION_LINE("Error sendbyte: %02X",WIIU_CP_TCP_HANDSHAKE);
         return false;
     }
 
     uint8_t clientProtocolVersion = recvbyte(clientfd);
     if(ret < 0) {
-        DEBUG_FUNCTION_LINE("Error recvbyte: %02X\n",WIIU_CP_TCP_HANDSHAKE);
+        DEBUG_FUNCTION_LINE("Error recvbyte: %02X",WIIU_CP_TCP_HANDSHAKE);
         return false;
     }
 
     if(clientProtocolVersion == WIIU_CP_TCP_HANDSHAKE_ABORT) {
-        DEBUG_FUNCTION_LINE("The network client wants to abort.\n");
+        DEBUG_FUNCTION_LINE("The network client wants to abort.");
         return false;
     }
 
-    DEBUG_FUNCTION_LINE("received protocol version: %d (0x%02X)\n",(clientProtocolVersion - WIIU_CP_TCP_HANDSHAKE_VERSION_1)+1,clientProtocolVersion);
+    DEBUG_FUNCTION_LINE("received protocol version: %d (0x%02X)",(clientProtocolVersion - WIIU_CP_TCP_HANDSHAKE_VERSION_1)+1,clientProtocolVersion);
 
     if(clientProtocolVersion >= WIIU_CP_TCP_HANDSHAKE_VERSION_MIN && clientProtocolVersion <= WIIU_CP_TCP_HANDSHAKE_VERSION_MAX) {
-        DEBUG_FUNCTION_LINE("We support this protocol version. Let's confirm it to the network client.\n");
+        DEBUG_FUNCTION_LINE("We support this protocol version. Let's confirm it to the network client.");
         gUsedProtocolVersion = clientProtocolVersion;
         ret = sendbyte(clientfd, clientProtocolVersion);
         if(ret < 0) {
-            DEBUG_FUNCTION_LINE("Error sendbyte: %02X\n",clientProtocolVersion);
+            DEBUG_FUNCTION_LINE("Error sendbyte: %02X",clientProtocolVersion);
             return false;
         }
     } else {
-        DEBUG_FUNCTION_LINE("We don't support this protocol version. We need to abort =(.\n");
+        DEBUG_FUNCTION_LINE("We don't support this protocol version. We need to abort =(.");
         ret = sendbyte(clientfd, WIIU_CP_TCP_HANDSHAKE_ABORT);
         return false;
     }
 
-    DEBUG_FUNCTION_LINE("Handshake done! Success!\n");
+    DEBUG_FUNCTION_LINE("Handshake done! Success!");
     return true;
 }
 

@@ -73,7 +73,7 @@ private:
                 OSGetTitleID() == 0x00050000101c9b00 || //The Binding of Isaac: Rebirth EUR
                 OSGetTitleID() == 0x00050000101a3c00) { //The Binding of Isaac: Rebirth USA
             priority = 10;
-            DEBUG_FUNCTION_LINE("This game needs higher thread priority. We set it to %d\n",priority);
+            DEBUG_FUNCTION_LINE("This game needs higher thread priority. We set it to %d",priority);
         }
         return priority;
     }

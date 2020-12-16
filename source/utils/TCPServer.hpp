@@ -50,7 +50,7 @@ private:
     virtual BOOL acceptConnection() = 0;
 
     virtual void onConnectionClosed(){
-        DEBUG_FUNCTION_LINE("Default onConnectionClosed \n");
+        DEBUG_FUNCTION_LINE("Default onConnectionClosed ");
     }
 
     /**

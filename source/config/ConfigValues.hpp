@@ -170,7 +170,7 @@ private:
     int32_t getPresetValueEx(std::string possibleString);
 
 	void InitValues(){
-        DEBUG_FUNCTION_LINE("Init values for the configuration\n");
+        DEBUG_FUNCTION_LINE("Init values for the configuration");
         CONTPRStringToValue["VPAD_BUTTON_A"] =                          CONTRPS_VPAD_BUTTON_A;
         CONTPRStringToValue["VPAD_BUTTON_B"] =                          CONTRPS_VPAD_BUTTON_B;
         CONTPRStringToValue["VPAD_BUTTON_X"] =                          CONTRPS_VPAD_BUTTON_X;

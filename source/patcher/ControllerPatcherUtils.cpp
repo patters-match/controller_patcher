@@ -23,7 +23,7 @@
 CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::getDataByHandle(int32_t handle, my_cb_user ** data) {
     for(int32_t i = 0; i< gHIDMaxDevices; i++) {
         for(int32_t j = 0; j<4; j++) {
-            //log_printf("%d %d %d %d\n",i,j,gHID_Devices[i].pad_data[j].handle,(uint32_t)handle);
+            //log_printf("%d %d %d %d",i,j,gHID_Devices[i].pad_data[j].handle,(uint32_t)handle);
             if(gHID_Devices[i].pad_data[j].handle == (uint32_t)handle) {
                 *data = gHID_Devices[i].pad_data[j].user_data;
                 return CONTROLLER_PATCHER_ERROR_NONE;
@@ -247,7 +247,7 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::getButtonPressed(HID_
             result = 1;
             break;
         } else {
-            //log_printf("Invalid data! deviceslot(slot): %d config: %d\n",deviceslot,cur_config);
+            //log_printf("Invalid data! deviceslot(slot): %d config: %d",deviceslot,cur_config);
         }
     } while(0); //The break will become handy ;)
 
@@ -632,7 +632,7 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::convertAnalogSticks(H
             }
         }
 
-        /*log_printf("LX %f(%02X) LY %f(%02X) RX %f(%02X) RY %f(%02X)\n",buffer->leftStick.x,cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X][0]],
+        /*log_printf("LX %f(%02X) LY %f(%02X) RX %f(%02X) RY %f(%02X)",buffer->leftStick.x,cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X][0]],
                                                                buffer->leftStick.y,cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y][0]],
                                                                buffer->rightStick.x,cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X][0]],
                                                                buffer->rightStick.y,cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y][0]]);*/
@@ -727,9 +727,9 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::checkAndSetMouseMode(
             gMouseModeCoolDown = 60;
             if(gHID_Mouse_Mode == HID_MOUSE_MODE_AIM) {
                 gHID_Mouse_Mode = HID_MOUSE_MODE_TOUCH;
-                //log_printf("ControllerPatcherUtils::checkAndSetMouseMode(line %d): Mouse mode changed! to touch \n",__LINE__);
+                //log_printf("ControllerPatcherUtils::checkAndSetMouseMode(line %d): Mouse mode changed! to touch ",__LINE__);
             } else if(gHID_Mouse_Mode == HID_MOUSE_MODE_TOUCH) {
-                //log_printf("ControllerPatcherUtils::checkAndSetMouseMode(line %d): Mouse mode changed! to aim \n",__LINE__);
+                //log_printf("ControllerPatcherUtils::checkAndSetMouseMode(line %d): Mouse mode changed! to aim ",__LINE__);
                 gHID_Mouse_Mode = HID_MOUSE_MODE_AIM;
             }
         }
@@ -944,7 +944,7 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::getDeviceInfoFromVidP
         for(int32_t i = 0; i< gHIDMaxDevices; i++) {
             uint16_t my_vid = config_controller[i][CONTRPS_VID][0] * 0x100 + config_controller[i][CONTRPS_VID][1];
             uint16_t my_pid = config_controller[i][CONTRPS_PID][0] * 0x100 + config_controller[i][CONTRPS_PID][1];
-            //log_printf("info->vidpid.vid (%04X) == my_vid (%04X) && info->vidpid.pid (%04X) == my_pid (%04X)\n",info->vidpid.vid,my_vid,info->vidpid.pid,my_pid);
+            //log_printf("info->vidpid.vid (%04X) == my_vid (%04X) && info->vidpid.pid (%04X) == my_pid (%04X)",info->vidpid.vid,my_vid,info->vidpid.pid,my_pid);
             if(info->vidpid.vid == my_vid && info->vidpid.pid == my_pid) {
                 info->slotdata.hidmask = config_controller_hidmask[i];
                 info->slotdata.deviceslot = i;
@@ -957,7 +957,7 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::getDeviceInfoFromVidP
                 }
 
                 return CONTROLLER_PATCHER_ERROR_NONE;
-                //log_printf("Found device: device: %s slot: %d\n",byte_to_binary(device),deviceSlot);
+                //log_printf("Found device: device: %s slot: %d",byte_to_binary(device),deviceSlot);
                 break;
             }
         }

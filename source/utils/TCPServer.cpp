@@ -20,17 +20,17 @@ TCPServer::TCPServer(int32_t port,int32_t priority) {
 
 TCPServer::~TCPServer() {
     CloseSockets();
-    //DEBUG_FUNCTION_LINE("Thread will be closed\n");
+    //DEBUG_FUNCTION_LINE("Thread will be closed");
     exitThread = 1;
 
     ICInvalidateRange((void*)&exitThread, 4);
     DCFlushRange((void*)&exitThread, 4);
 
     if(pThread != NULL) {
-        //DEBUG_FUNCTION_LINE("Deleting it!\n");
+        //DEBUG_FUNCTION_LINE("Deleting it!");
         delete pThread;
     }
-    //DEBUG_FUNCTION_LINE("Thread done\n");
+    //DEBUG_FUNCTION_LINE("Thread done");
     pThread = NULL;
 }
 
@@ -84,7 +84,7 @@ void TCPServer::DoTCPThreadInternal() {
         }
 
         do {
-            DEBUG_FUNCTION_LINE("Waiting for a connection\n");
+            DEBUG_FUNCTION_LINE("Waiting for a connection");
             if(exitThread) {
                 break;
             }
@@ -103,24 +103,24 @@ void TCPServer::DoTCPThreadInternal() {
 
             connected = true;
 
-            DEBUG_FUNCTION_LINE("Connection accepted\n");
+            DEBUG_FUNCTION_LINE("Connection accepted");
 
             whileLoop();
 
-            DEBUG_FUNCTION_LINE("Client disconnected\n");
+            DEBUG_FUNCTION_LINE("Client disconnected");
 
             if(clientfd != -1) {
                 socketclose(clientfd);
             }
             clientfd = -1;
         } while(0);
-        DEBUG_FUNCTION_LINE("Closing TCPServer\n");
+        DEBUG_FUNCTION_LINE("Closing TCPServer");
         connected = false;
         onConnectionClosed();
         CloseSockets();
         continue;
     }
-    DEBUG_FUNCTION_LINE("Ending DoTCPThreadInternal\n");
+    DEBUG_FUNCTION_LINE("Ending DoTCPThreadInternal");
 }
 
 void TCPServer::DoTCPThread(CThread *thread, void *arg) {
