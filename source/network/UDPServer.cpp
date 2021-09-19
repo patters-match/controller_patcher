@@ -52,7 +52,7 @@ UDPServer::~UDPServer() {
             delete pThreadPointer;
             UDPServer::pThread = NULL;
             if (this->sockfd != -1) {
-                socketclose(sockfd);
+                close(sockfd);
             }
             this->sockfd = -1;
         }
@@ -104,9 +104,9 @@ void UDPServer::DoUDPThreadInternal() {
         memset(buffer,0,MAX_UDP_SIZE);
         n = recv(sockfd,buffer,MAX_UDP_SIZE,0);
         if (n < 0) {
-            int32_t errno_ = socketlasterr();
+            int32_t errno_ = errno;
             OSSleepTicks(OSMicrosecondsToTicks(2000));
-            if(errno_ != 11 && errno_ != 9) {
+            if(errno_ != EINVAL && errno_ != ENOTCONN) {
                 break;
             }
             continue;

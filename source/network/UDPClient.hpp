@@ -18,6 +18,8 @@
 #define _UDPCLIENT_WINDOW_H_
 
 #include "../ControllerPatcherIncludes.hpp"
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 #define DEFAULT_UDP_CLIENT_PORT    8114
 

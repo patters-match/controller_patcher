@@ -19,6 +19,9 @@
 
 #include "../ControllerPatcherIncludes.hpp"
 
+#include <errno.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include <utils/TCPServer.hpp>
 #include <network/net.h>
 #include <coreinit/title.h>

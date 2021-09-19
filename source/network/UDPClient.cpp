@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
 #include "UDPClient.hpp"
+#include <netinet/in.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -36,14 +37,14 @@ UDPClient::UDPClient(uint32_t ip, int32_t port) {
     connect_addr.sin_addr.s_addr = ip;
 
     if(connect(sockfd, (struct sockaddr*)&connect_addr, sizeof(connect_addr)) < 0) {
-        socketclose(sockfd);
+        close(sockfd);
         sockfd = -1;
     }
 }
 
 UDPClient::~UDPClient() {
     if (this->sockfd != -1) {
-        socketclose(sockfd);
+        close(sockfd);
     }
     if(HID_DEBUG) {
         log_printf("UDPClient::~UDPClient(line %d): Thread has been closed",__LINE__);

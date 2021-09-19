@@ -36,10 +36,10 @@ TCPServer::~TCPServer() {
 
 void TCPServer::CloseSockets() {
     if (this->sockfd != -1) {
-        socketclose(this->sockfd);
+        close(this->sockfd);
     }
     if (this->clientfd != -1) {
-        socketclose(this->clientfd);
+        close(this->clientfd);
     }
     this->sockfd = -1;
     this->clientfd = -1;
@@ -110,7 +110,7 @@ void TCPServer::DoTCPThreadInternal() {
             DEBUG_FUNCTION_LINE("Client disconnected");
 
             if(clientfd != -1) {
-                socketclose(clientfd);
+                close(clientfd);
             }
             clientfd = -1;
         } while(0);

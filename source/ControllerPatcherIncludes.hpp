@@ -26,7 +26,7 @@
 #include <padscore/wpad.h>
 #include <vpad/input.h>
 #include <coreinit/systeminfo.h>
-#include <nsysnet/socket.h>
+#include <sys/socket.h>
 
 #include "./ConfigReader.hpp"
 #include <controller_patcher/ControllerPatcher.hpp>

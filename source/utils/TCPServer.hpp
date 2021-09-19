@@ -2,8 +2,8 @@
 #define _TCPSERVER_H_
 
 #include <sys/select.h>
-
-#include <nsysnet/socket.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include <system/CThread.h>
 #include <wut_types.h>
 

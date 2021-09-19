@@ -489,7 +489,7 @@ BOOL ControllerPatcher::Init(const char * pathToConfig) {
     OSDynLoad_Module handle;
     void* kpad_ptr;
     OSDynLoad_Acquire("padscore",&handle);
-    OSDynLoad_FindExport(handle, 0 ,"KPADRead",&kpad_ptr);
+    OSDynLoad_FindExport(handle, OS_DYNLOAD_EXPORT_FUNC ,"KPADRead",&kpad_ptr);
 
     gSamplingCallback = (WPADSamplingCallback)((uint32_t)kpad_ptr + 0x1F0);
     if(*(uint32_t*)gSamplingCallback != FIRST_INSTRUCTION_IN_SAMPLING_CALLBACK) {
@@ -798,7 +798,7 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::gettingInputAllDevices(Inp
         if((hid & (1 << i)) != 0) {
             memset(buffer,0,sizeof(*buffer));
 
-            int32_t newhid = (1 << i);
+            uint32_t newhid = (1 << i);
             int32_t deviceslot = ControllerPatcherUtils::getDeviceSlot(newhid);
             if(deviceslot < 0) continue;
 

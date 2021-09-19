@@ -239,7 +239,7 @@ int32_t ControllerPatcherHID::AttachDetachCallback(HIDClient *p_client, HIDDevic
             } else if (slotdata->hidmask == gHID_LIST_MOUSE) {
                 HIDSetProtocol(p_device->handle, p_device->interfaceIndex, 0, 0, 0);
                 //HIDGetDescriptor(p_device->handle,0x22,0x00,0,my_buf,512,my_foo_cb,NULL);
-                HIDSetIdle(p_device->handle,p_device->interfaceIndex,1,NULL,NULL);
+                HIDSetIdle(p_device->handle,p_device->interfaceIndex,1,NULL,NULL,NULL);
                 gHID_Mouse_Mode = HID_MOUSE_MODE_AIM;
                 HIDRead(p_device->handle, buf, p_device->maxPacketSizeRx, myHIDMouseReadCallback, usr);
             } else if (slotdata->hidmask == gHID_LIST_SWITCH_PRO) {
@@ -272,7 +272,7 @@ int32_t ControllerPatcherHID::AttachDetachCallback(HIDClient *p_client, HIDDevic
                 }
             } else if (slotdata->hidmask == gHID_LIST_KEYBOARD) {
                 HIDSetProtocol(p_device->handle, p_device->interfaceIndex, 1, 0, 0);
-                HIDSetIdle(p_device->handle, p_device->interfaceIndex, 0, 0, 0);
+                HIDSetIdle(p_device->handle, p_device->interfaceIndex, 0, 0, nullptr, nullptr);
                 HIDRead(p_device->handle, buf, p_device->maxPacketSizeRx, myHIDReadCallback, usr);
             } else if (slotdata->hidmask == gHID_LIST_DS3) {
                 HIDSetProtocol(p_device->handle, p_device->interfaceIndex, 1, 0, 0);

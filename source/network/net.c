@@ -1,10 +1,7 @@
-#include <network/net.h>
-#include <nsysnet/socket.h>
 #include <coreinit/systeminfo.h>
 #include <coreinit/thread.h>
-#include <nn/ac/ac_c.h>
+#include <sys/socket.h>
 
-static uint32_t hostIpAddress __attribute__((section(".data"))) = 0;
 static volatile int socket_lock __attribute__((section(".data"))) = 0;
 
 void initNetwork(){

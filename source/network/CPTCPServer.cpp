@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
 #include "CPTCPServer.hpp"
+#include <netinet/in.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
@@ -81,7 +82,7 @@ BOOL CPTCPServer::whileLoop() {
         }
         ret = checkbyte(clientfd);
         if (ret < 0) {
-            if(socketlasterr() != 6) {
+            if(errno != EWOULDBLOCK) {
                 return false;
             }
             OSSleepTicks(OSMicrosecondsToTicks(1000));

@@ -34,26 +34,26 @@ SOURCES		:=	source \
 				source/utils
 DATA		:=	data
 INCLUDES	:=	source \
-				include
+				include \
 
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-CFLAGS	:=	-Wall -save-temps \
+CFLAGS	:=	-Wall -Werror -save-temps \
 			-ffunction-sections -fdata-sections \
 			$(MACHDEP) \
 			$(BUILD_CFLAGS)
 
-CFLAGS	+=	$(INCLUDE) -D__WIIU__ -D__LOGGING__
+CFLAGS	+=	$(INCLUDE) -D__WIIU__
 
-CXXFLAGS	:= $(CFLAGS) -std=gnu++17
+CXXFLAGS	:= $(CFLAGS) -std=gnu++20
 
 ASFLAGS	:=	$(MACHDEP)
 
 LDFLAGS	=	$(ARCH) -Wl,--gc-sections
 
 
-LIBS	:= 
+LIBS	:=
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -76,7 +76,6 @@ export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-DEFFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.def)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
 
 #---------------------------------------------------------------------------------
@@ -94,12 +93,13 @@ endif
 #---------------------------------------------------------------------------------
 
 export OFILES_BIN	:=	$(addsuffix .o,$(BINFILES))
-export OFILES_SRC	:=	$(DEFFILES:.def=.o) $(SFILES:.s=.o) $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
+export OFILES_SRC	:=	$(SFILES:.s=.o) $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 export OFILES 	:=	$(OFILES_BIN) $(OFILES_SRC)
 export HFILES	:=	$(addsuffix .h,$(subst .,_,$(BINFILES)))
 
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-			$(foreach dir,$(LIBDIRS),-I$(dir)/include)
+			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+			-I.
 
 .PHONY: all dist-bin dist-src dist install clean
 
@@ -119,13 +119,10 @@ install: dist-bin
 	bzip2 -cd libcontrollerpatcher-$(VERSION).tar.bz2 | tar -xf - -C $(WUT_ROOT)/usr
 
 lib:
-	@[ -d $@ ] || mkdir -p $@
-    
-share:
-	@[ -d $@ ] || mkdir -p $@
+	@$(shell [ ! -d 'lib' ] && mkdir -p 'lib')
 
 release:
-	@[ -d $@ ] || mkdir -p $@
+	@$(shell [ ! -d 'release' ] && mkdir -p 'release')
 
 lib/libcontrollerpatcher.a :$(SOURCES) $(INCLUDES) | lib release
 	@$(MAKE) BUILD=release OUTPUT=$(CURDIR)/$@ \
@@ -151,12 +148,6 @@ $(OUTPUT)	:	$(OFILES)
 
 $(OFILES_SRC)	: $(HFILES)
 
-#---------------------------------------------------------------------------------
-%.o: %.def
-	$(SILENTMSG) $(notdir $<)
-	$(SILENTCMD)rplimportgen $< $*.s $*.ld $(ERROR_FILTER)
-	$(SILENTCMD)$(CC) -x assembler-with-cpp $(ASFLAGS) -c $*.s -o $@ $(ERROR_FILTER)
-    
 #---------------------------------------------------------------------------------
 %_bin.h %.bin.o	:	%.bin
 #---------------------------------------------------------------------------------
