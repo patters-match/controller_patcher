@@ -50,6 +50,10 @@ ControllerPatcher::DeInit();
 ControllerPatcher::stopNetworkServer();
 ```
 
+## Format the code via docker
+`docker run --rm -v ${PWD}:/src ghcr.io/wiiu-env/clang-format:13.0.0-2 -r ./source ./include -i`
+
+
 # Credits:
 - Maschell  
 - FIX94 - huge thanks to him and his initally created gc-to-vpad. Was a motivation and base to start all this

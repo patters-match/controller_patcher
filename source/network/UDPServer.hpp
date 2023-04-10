@@ -19,22 +19,22 @@
 
 #include "../ControllerPatcherIncludes.hpp"
 
-#define DEFAULT_UDP_PORT    8113
+#define DEFAULT_UDP_PORT                 8113
 
-#define WIIU_CP_UDP_CONTROLLER_READ_DATA        0x03
+#define WIIU_CP_UDP_CONTROLLER_READ_DATA 0x03
 
 class UDPServer {
     friend class ControllerPatcher;
 
 private:
     static UDPServer *getInstance() {
-        if(instance == NULL)
+        if (instance == NULL)
             instance = new UDPServer(DEFAULT_UDP_PORT);
         return instance;
     }
 
     static void destroyInstance() {
-        if(instance != NULL) {
+        if (instance != NULL) {
             delete instance;
             instance = NULL;
         }
@@ -42,12 +42,12 @@ private:
 
     UDPServer(int32_t port);
     ~UDPServer();
-    void StartUDPThread(UDPServer * server);
+    void StartUDPThread(UDPServer *server);
     static void DoUDPThread(CThread *thread, void *arg);
     void DoUDPThreadInternal();
-    BOOL cpyIncrementBufferOffset(void * target, void * source, int32_t * offset, int32_t typesize, int32_t maximum);
+    BOOL cpyIncrementBufferOffset(void *target, void *source, int32_t *offset, int32_t typesize, int32_t maximum);
 
-    volatile int32_t sockfd = -1;
+    volatile int32_t sockfd     = -1;
     volatile int32_t exitThread = 0;
 
     static UDPServer *instance;

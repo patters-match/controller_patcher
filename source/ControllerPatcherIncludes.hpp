@@ -22,29 +22,29 @@
 
 #include <wut_types.h>
 
+#include <coreinit/systeminfo.h>
 #include <padscore/kpad.h>
 #include <padscore/wpad.h>
-#include <vpad/input.h>
-#include <coreinit/systeminfo.h>
 #include <sys/socket.h>
+#include <vpad/input.h>
 
 #include "./ConfigReader.hpp"
 #include <controller_patcher/ControllerPatcher.hpp>
 
 
-#include <system/CThread.h>
 #include "./utils/CPRetainVars.hpp"
 #include "./utils/PadConst.hpp"
+#include <system/CThread.h>
 #include <utils/StringTools.h>
 
 #include "./patcher/ControllerPatcherHID.hpp"
 #include "./patcher/ControllerPatcherUtils.hpp"
 
-#include "./config/ConfigValues.hpp"
 #include "./config/ConfigParser.hpp"
+#include "./config/ConfigValues.hpp"
 
 #include "./network/CPTCPServer.hpp"
-#include "./network/UDPServer.hpp"
 #include "./network/UDPClient.hpp"
+#include "./network/UDPServer.hpp"
 
 #endif /* _CONTROLLER_PATCHER_INCLUDES_H_ */

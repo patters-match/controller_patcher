@@ -17,13 +17,12 @@
 #include "./ConfigReader.hpp"
 #include <fs/FSUtils.h>
 
+#include <fcntl.h>
+#include <map>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <map>
-#include <stdio.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -32,20 +31,20 @@
 #include <utils/logger.h>
 
 int32_t ConfigReader::numberValidFiles = 0;
-ConfigReader *ConfigReader::instance = NULL;
+ConfigReader *ConfigReader::instance   = NULL;
 
 ConfigReader::ConfigReader() {
 }
 
 BOOL ConfigReader::ReadConfigs(std::string path) {
     std::vector<std::string> fileList = ScanFolder(path);
-    if(fileList.size() == 1 && fileList[0].compare("ERROR") == 0) {
+    if (fileList.size() == 1 && fileList[0].compare("ERROR") == 0) {
         return false;
     }
 
-    if(fileList.size() > 0) {
-        if(HID_DEBUG) {
-            DEBUG_FUNCTION_LINE("Found %d config files",fileList.size());
+    if (fileList.size() > 0) {
+        if (HID_DEBUG) {
+            DEBUG_FUNCTION_LINE("Found %d config files", fileList.size());
         }
         processFileList(fileList);
     }
@@ -54,7 +53,7 @@ BOOL ConfigReader::ReadConfigs(std::string path) {
 
 
 ConfigReader::~ConfigReader() {
-    if(HID_DEBUG) {
+    if (HID_DEBUG) {
         DEBUG_FUNCTION_LINE("~ConfigReader");
     }
 }
@@ -63,26 +62,26 @@ std::vector<std::string> ConfigReader::ScanFolder(std::string path) {
     std::vector<std::string> config_files;
 
     struct dirent *dirent = NULL;
-    DIR *dirHandle = opendir(path.c_str());
+    DIR *dirHandle        = opendir(path.c_str());
     if (dirHandle == NULL) {
-        DEBUG_FUNCTION_LINE("Failed to open dir %s",path.c_str());
+        DEBUG_FUNCTION_LINE("Failed to open dir %s", path.c_str());
         config_files.push_back("ERROR"); //TODO: Find a proper solution
         return config_files;
     }
     while ((dirent = readdir(dirHandle)) != 0) {
-        BOOL isDir = dirent->d_type & DT_DIR;
+        BOOL isDir           = dirent->d_type & DT_DIR;
         const char *filename = dirent->d_name;
 
-        if(strcmp(filename,".") == 0 || strcmp(filename,"..") == 0) {
+        if (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0) {
             continue;
         }
 
         std::string newPath = path + "/" + std::string(filename);
 
-        if(!isDir && StringTools::EndsWith(std::string(filename),".ini")) {
+        if (!isDir && StringTools::EndsWith(std::string(filename), ".ini")) {
             config_files.push_back(newPath);
-            if(HID_DEBUG) {
-                DEBUG_FUNCTION_LINE("Found ini: %s ",newPath.c_str());
+            if (HID_DEBUG) {
+                DEBUG_FUNCTION_LINE("Found ini: %s ", newPath.c_str());
             }
         }
     }
@@ -91,8 +90,8 @@ std::vector<std::string> ConfigReader::ScanFolder(std::string path) {
 }
 
 void ConfigReader::processFileList(std::vector<std::string> path) {
-    for(std::vector<std::string>::iterator it = path.begin(); it != path.end(); ++it) {
-        DEBUG_FUNCTION_LINE("Reading %s",it->c_str());
+    for (std::vector<std::string>::iterator it = path.begin(); it != path.end(); ++it) {
+        DEBUG_FUNCTION_LINE("Reading %s", it->c_str());
         std::string result = loadFileToString(*it);
 
         ConfigParser parser(result);
@@ -102,12 +101,12 @@ void ConfigReader::processFileList(std::vector<std::string> path) {
 
 std::string ConfigReader::loadFileToString(std::string path) {
     std::string strBuffer = "";
-    uint8_t * buffer = NULL;
-    if(FSUtils::LoadFileToMem(path.c_str(),&buffer,NULL) > 0) {
-        strBuffer = std::string((char *)buffer);
-        strBuffer = StringTools::removeCharFromString(strBuffer,'\r');
-        strBuffer = StringTools::removeCharFromString(strBuffer,' ');
-        strBuffer = StringTools::removeCharFromString(strBuffer,'\t');
+    uint8_t *buffer       = NULL;
+    if (FSUtils::LoadFileToMem(path.c_str(), &buffer, NULL) > 0) {
+        strBuffer = std::string((char *) buffer);
+        strBuffer = StringTools::removeCharFromString(strBuffer, '\r');
+        strBuffer = StringTools::removeCharFromString(strBuffer, ' ');
+        strBuffer = StringTools::removeCharFromString(strBuffer, '\t');
     }
     return strBuffer;
 }

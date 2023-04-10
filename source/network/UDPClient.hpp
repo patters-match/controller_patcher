@@ -18,20 +18,20 @@
 #define _UDPCLIENT_WINDOW_H_
 
 #include "../ControllerPatcherIncludes.hpp"
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
 
-#define DEFAULT_UDP_CLIENT_PORT    8114
+#define DEFAULT_UDP_CLIENT_PORT 8114
 
 class UDPClient {
     friend class ControllerPatcher;
     friend class ControllerPatcherHID;
     friend class CPTCPServer;
-public:
 
+public:
 private:
     static UDPClient *getInstance() {
-        if(instance == NULL) {
+        if (instance == NULL) {
             createInstance();
         }
         return instance;
@@ -39,24 +39,24 @@ private:
 
 
     static UDPClient *createInstance() {
-        if(instance != NULL) {
+        if (instance != NULL) {
             destroyInstance();
         }
-        instance = new UDPClient(gUDPClientip,DEFAULT_UDP_CLIENT_PORT);
+        instance = new UDPClient(gUDPClientip, DEFAULT_UDP_CLIENT_PORT);
 
-        return  getInstance();
+        return getInstance();
     }
 
     static void destroyInstance() {
-        if(instance != NULL) {
+        if (instance != NULL) {
             delete instance;
             instance = NULL;
         }
     }
 
-    UDPClient(uint32_t ip,int32_t port);
+    UDPClient(uint32_t ip, int32_t port);
     ~UDPClient();
-    BOOL sendData(char * data, int32_t length);
+    BOOL sendData(char *data, int32_t length);
 
     volatile int32_t sockfd = -1;
     struct sockaddr_in addr;

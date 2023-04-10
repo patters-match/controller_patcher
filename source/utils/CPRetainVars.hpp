@@ -71,6 +71,6 @@ extern uint8_t gGlobalRumbleActivated;
 extern uint8_t gNetworkControllerActivated;
 
 extern uint32_t gUDPClientip;
-extern ControllerMappingPADInfo* gProPadInfo[4];
+extern ControllerMappingPADInfo *gProPadInfo[4];
 
 #endif // CP_RETAINS_VARS_H_

@@ -32,35 +32,36 @@
 #include "../ControllerPatcherIncludes.hpp"
 
 //! Own definitions
-#define VPAD_BUTTON_TOUCH               0x00080000
-#define VPAD_MASK_EMULATED_STICKS       0x7F800000
-#define VPAD_MASK_BUTTONS ~VPAD_MASK_EMULATED_STICKS
+#define VPAD_BUTTON_TOUCH         0x00080000
+#define VPAD_MASK_EMULATED_STICKS 0x7F800000
+#define VPAD_MASK_BUTTONS         ~VPAD_MASK_EMULATED_STICKS
 
 
-#define SWAP16(x) ((x>>8) | ((x&0xFF)<<8))
-#define SWAP8(x) ((x>>4) | ((x&0xF)<<4))
+#define SWAP16(x)                 ((x >> 8) | ((x & 0xFF) << 8))
+#define SWAP8(x)                  ((x >> 4) | ((x & 0xF) << 4))
 
 class ControllerPatcherHID {
     friend class ControllerPatcher;
     friend class ControllerPatcherUtils;
+
 public:
-    static int32_t  externAttachDetachCallback(HIDDevice *p_device, HIDAttachEvent attach);
-    static void externHIDReadCallback(uint32_t handle, unsigned char *buf, uint32_t bytes_transfered, my_cb_user * usr);
+    static int32_t externAttachDetachCallback(HIDDevice *p_device, HIDAttachEvent attach);
+    static void externHIDReadCallback(uint32_t handle, unsigned char *buf, uint32_t bytes_transfered, my_cb_user *usr);
 
 private:
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR setVPADControllerData(VPADStatus * buffer,std::vector<HID_Data *>& data);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR setVPADControllerData(VPADStatus *buffer, std::vector<HID_Data *> &data);
     static std::vector<HID_Data *> getHIDDataAll();
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR getHIDData(uint32_t hidmask, int32_t pad,  HID_Data ** data);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR getHIDData(uint32_t hidmask, int32_t pad, HID_Data **data);
 
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
      * Rumble
      *---------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-    static void HIDRumble(uint32_t handle,my_cb_user *usr,uint32_t pad);
+    static void HIDRumble(uint32_t handle, my_cb_user *usr, uint32_t pad);
 
-    static void HIDGCRumble(uint32_t handle,my_cb_user *usr);
+    static void HIDGCRumble(uint32_t handle, my_cb_user *usr);
 
-    static void HIDDS3Rumble(uint32_t handle,my_cb_user *usr,int32_t rumble);
+    static void HIDDS3Rumble(uint32_t handle, my_cb_user *usr, int32_t rumble);
 
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
      * HID Callbacks
@@ -71,7 +72,7 @@ private:
     static void myHIDReadCallback(uint32_t handle, int32_t error, unsigned char *buf, uint32_t bytes_transfered, void *p_user);
 
     static int32_t AttachDetachCallback(HIDClient *p_client, HIDDevice *p_device, HIDAttachEvent attach);
-    static void HIDReadCallback(uint32_t handle, unsigned char *buf, uint32_t bytes_transfered, my_cb_user * usr);
+    static void HIDReadCallback(uint32_t handle, unsigned char *buf, uint32_t bytes_transfered, my_cb_user *usr);
 };
 
 #endif /* _CONTROLLER_PATCHER_HID_H_ */

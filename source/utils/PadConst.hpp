@@ -19,8 +19,8 @@
 #define _PAD_CONST_H_
 
 
-#include <string>
 #include <controller_patcher/ControllerPatcherDefs.h>
+#include <string>
 
 extern const uint8_t DEF_R_STICK;
 extern const uint8_t DEF_L_STICK;
@@ -74,7 +74,7 @@ extern const uint8_t HID_GC_STICK_R_Y[STICK_CONF_ENUM_MAXVALUE];
 
 extern const uint8_t HID_DS3_BUTTON_CROSS[];
 extern const uint8_t HID_DS3_BUTTON_CIRCLE[];
-extern const uint8_t HID_DS3_BUTTON_SQUARE [];
+extern const uint8_t HID_DS3_BUTTON_SQUARE[];
 extern const uint8_t HID_DS3_BUTTON_TRIANGLE[];
 
 extern const uint8_t HID_DS3_BUTTON_L1[];
@@ -106,7 +106,7 @@ extern const uint8_t HID_DS3_STICK_R_Y[STICK_CONF_ENUM_MAXVALUE];
 
 extern const uint8_t HID_DS4_BUTTON_CROSS[];
 extern const uint8_t HID_DS4_BUTTON_CIRCLE[];
-extern const uint8_t HID_DS4_BUTTON_SQUARE [];
+extern const uint8_t HID_DS4_BUTTON_SQUARE[];
 extern const uint8_t HID_DS4_BUTTON_TRIANGLE[];
 
 extern const uint8_t HID_DS4_BUTTON_L1[];

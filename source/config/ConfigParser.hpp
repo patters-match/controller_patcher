@@ -17,9 +17,9 @@
 #ifndef _ConfigParser_H_
 #define _ConfigParser_H_
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include <stdio.h>
 
@@ -27,16 +27,17 @@
 
 #include <utils/logger.h>
 
-enum PARSE_TYPE{
+enum PARSE_TYPE {
     PARSE_CONTROLLER,
     PARSE_GAMEPAD,
     PARSE_MOUSE,
     PARSE_KEYBOARD
 };
 
-class ConfigParser{
+class ConfigParser {
     friend class ConfigReader;
     friend class ControllerPatcher;
+
 private:
     //!Constructor
     ConfigParser(std::string configData);
@@ -59,7 +60,7 @@ private:
 
     int32_t checkExistingController(int32_t vid, int32_t pid);
 
-    int32_t getValueFromKeyValue(std::string value_pair,std::string expectedKey,std::string delimiter);
+    int32_t getValueFromKeyValue(std::string value_pair, std::string expectedKey, std::string delimiter);
 
     BOOL resetConfig();
 

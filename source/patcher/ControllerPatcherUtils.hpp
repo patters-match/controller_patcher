@@ -56,7 +56,7 @@ public:
 
     \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful. The actual result will be store in the given my_cb_user **.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR getDataByHandle(int32_t handle, my_cb_user ** data);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR getDataByHandle(int32_t handle, my_cb_user **data);
 
     /**
     \brief Returns the VID/PID for the given device slot.
@@ -66,7 +66,7 @@ public:
 
     \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful. The actual result will be store in the given DeviceVIDPIDInfo *.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR getVIDPIDbyDeviceSlot(int32_t deviceslot, DeviceVIDPIDInfo * vidpid);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR getVIDPIDbyDeviceSlot(int32_t deviceslot, DeviceVIDPIDInfo *vidpid);
 
     /** \brief Set the VPAD data for a given KPAD data.
     *
@@ -76,7 +76,8 @@ public:
     * \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     *
     */
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR translateToVPAD(VPADStatus * vpad_buffer,KPADStatus * pro_buffer,uint32_t * lastButtonsPressesVPAD);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR translateToVPAD(VPADStatus *vpad_buffer, KPADStatus *pro_buffer, uint32_t *lastButtonsPressesVPAD);
+
 private:
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
      * Analyse inputs
@@ -90,7 +91,7 @@ private:
      * \return When the functions failed result < 0 is returned.If the result is >= 0 the function was successful.
      *
      */
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR getButtonPressed(HID_Data * data, int32_t * buttons_hold, int32_t VPADButton);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR getButtonPressed(HID_Data *data, int32_t *buttons_hold, int32_t VPADButton);
 
 
     /** \brief Checks if a given value is set in the HID_DATA given the data in the slot number provided by cur_config.
@@ -100,7 +101,7 @@ private:
      * \return When the functions failed result < 0 is returned. If the value is set, 1 will be returned. Otherwise 0.
      *
      */
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR isValueSet(HID_Data * data,int32_t cur_config);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR isValueSet(HID_Data *data, int32_t cur_config);
 
 
     /** \brief Checks if a given key in the keyboard data is pressed.
@@ -110,7 +111,7 @@ private:
      * \return When the functions failed result < 0 is returned. If the key is active pressed, 1 is returned.
      *
      */
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR isInKeyboardData(unsigned char * keyboardData,int32_t key);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR isInKeyboardData(unsigned char *keyboardData, int32_t key);
 
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
      * Utils for setting the Button data
@@ -126,7 +127,7 @@ private:
      * \return When the functions failed result < 0 is returned. If the pad is active/connected, 1 is returned.
      *
      */
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR setButtonRemappingData(VPADStatus * old_buffer, VPADStatus * new_buffer,uint32_t VPADButton, int32_t CONTRPS_SLOT);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR setButtonRemappingData(VPADStatus *old_buffer, VPADStatus *new_buffer, uint32_t VPADButton, int32_t CONTRPS_SLOT);
 
     /**
         \brief Checks if a given button (oldVPADButton) is set in a given VPADStatus struct (old_buffer). If its set, it will set an other
@@ -139,7 +140,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the pad is active/connected, 1 is returned.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR setButtonData(VPADStatus * old_buffer, VPADStatus * new_buffer,uint32_t oldVPADButton,uint32_t newVPADButton);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR setButtonData(VPADStatus *old_buffer, VPADStatus *new_buffer, uint32_t oldVPADButton, uint32_t newVPADButton);
 
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
      * Pad Status functions
@@ -152,7 +153,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the pad is active/connected, 1 is returned.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR checkActivePad(uint32_t hidmask,int32_t pad);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR checkActivePad(uint32_t hidmask, int32_t pad);
 
     /**
         \brief Returns the first active pad of devices with the given HID-Mask. Currently only implemented for the GC-Adapter. Every other pad will always return 0.
@@ -173,7 +174,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR normalizeStickValues(VPADVec2D * stick);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR normalizeStickValues(VPADVec2D *stick);
 
     /**
         \brief Converts the digital absolute stick data into a float value. It also applies the deadzones, and can invert the result.
@@ -187,7 +188,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static float convertAnalogValue(uint8_t value, uint8_t default_val, uint8_t min, uint8_t max, uint8_t invert,uint8_t deadzone);
+    static float convertAnalogValue(uint8_t value, uint8_t default_val, uint8_t min, uint8_t max, uint8_t invert, uint8_t deadzone);
 
     /**
         \brief Calculates a the stick data (VPADVec2D) from given digital direction.
@@ -206,7 +207,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR convertAnalogSticks(HID_Data * data,VPADStatus * buffer);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR convertAnalogSticks(HID_Data *data, VPADStatus *buffer);
 
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
      * Mouse functions
@@ -220,7 +221,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR setTouch(HID_Data * data,VPADStatus * buffer);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR setTouch(HID_Data *data, VPADStatus *buffer);
 
     /** \brief  Checks if the mouse mode needs to be changed. Sets it to the new mode if necessary.
      *         Currently the incoming data needs to be from a keyboard.
@@ -229,7 +230,7 @@ private:
      * \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
      *
      */
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR checkAndSetMouseMode(HID_Data * data);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR checkAndSetMouseMode(HID_Data *data);
 
     /**
         \brief Set the emulated sticks for a given VPAD data.
@@ -239,7 +240,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR setEmulatedSticks(VPADStatus * buffer, uint32_t * last_emulatedSticks);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR setEmulatedSticks(VPADStatus *buffer, uint32_t *last_emulatedSticks);
 
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
      * Other functions
@@ -252,8 +253,8 @@ private:
      * \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
      *
      */
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR translateToPro(VPADStatus * vpad_buffer, KPADStatus * pro_buffer, uint32_t * lastButtonsPressesPRO);
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR translateToProWPADRead(VPADStatus * vpad_buffer,WPADStatusProController * pro_buffer);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR translateToPro(VPADStatus *vpad_buffer, KPADStatus *pro_buffer, uint32_t *lastButtonsPressesPRO);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR translateToProWPADRead(VPADStatus *vpad_buffer, WPADStatusProController *pro_buffer);
 
     /**
         \brief Checks if the value at the given device + CONTRPS slot equals the expected value.
@@ -264,7 +265,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR checkValueinConfigController(int32_t device_slot,int32_t CONTRPS_slot,int32_t expectedValue);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR checkValueinConfigController(int32_t device_slot, int32_t CONTRPS_slot, int32_t expectedValue);
 
     /**
         \brief Sets two uint8_t values to the given pointer.
@@ -273,7 +274,7 @@ private:
         \param first: Value that will be written in @p dest[0]
         \param second: Value that will be written in @p dest[1]
     **/
-    static void setConfigValue(uint8_t * dest , uint8_t first, uint8_t second);
+    static void setConfigValue(uint8_t *dest, uint8_t first, uint8_t second);
 
     /**
         \brief Saves a new free device slot and the corresponding HID-Mask in the given @p HIDSlotData pointer
@@ -282,7 +283,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR getNextSlotData(HIDSlotData * slotdata);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR getNextSlotData(HIDSlotData *slotdata);
 
     /**
         \brief Fills up a given DeviceInfo, which provides a valid VID/PID, with HIDSlotData.
@@ -291,7 +292,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR getDeviceInfoFromVidPid(DeviceInfo * info);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR getDeviceInfoFromVidPid(DeviceInfo *info);
 
     /**
        \brief returns the internal slot number of the device. Some adapters have multiple slot and send the data for each one
@@ -302,7 +303,7 @@ private:
        \param current input data
        \return The relative slot in the device
     **/
-    static int32_t getPadSlotInAdapter(int32_t deviceslot, uint8_t * input_data);
+    static int32_t getPadSlotInAdapter(int32_t deviceslot, uint8_t *input_data);
 
     /**
     \brief returns a pointer to the ControllerMapping to the given controller type
@@ -311,9 +312,9 @@ private:
 
     \return pointer to ControllerMapping data, null is type was invalid
     **/
-    static ControllerMappingPAD * getControllerMappingByType(UController_Type type);
+    static ControllerMappingPAD *getControllerMappingByType(UController_Type type);
 
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR doSampling(uint16_t deviceslot,uint8_t padslot,BOOL ignorePadSlot);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR doSampling(uint16_t deviceslot, uint8_t padslot, BOOL ignorePadSlot);
 
     static CONTROLLER_PATCHER_RESULT_OR_ERROR doSamplingSingle(WPADChan chan, uint16_t deviceslot, uint8_t padslot, BOOL ignorePadSlot);
 };

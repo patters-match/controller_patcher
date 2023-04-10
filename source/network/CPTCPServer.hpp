@@ -19,12 +19,12 @@
 
 #include "../ControllerPatcherIncludes.hpp"
 
-#include <errno.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <utils/TCPServer.hpp>
-#include <network/net.h>
 #include <coreinit/title.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <network/net.h>
+#include <sys/socket.h>
+#include <utils/TCPServer.hpp>
 
 #define WIIU_CP_TCP_HANDSHAKE               WIIU_CP_TCP_HANDSHAKE_VERSION_3
 
@@ -35,26 +35,26 @@
 #define WIIU_CP_TCP_HANDSHAKE_VERSION_2     0x13
 #define WIIU_CP_TCP_HANDSHAKE_VERSION_3     0x14
 
-#define  WIIU_CP_TCP_HANDSHAKE_ABORT        0x30
+#define WIIU_CP_TCP_HANDSHAKE_ABORT         0x30
 
-#define WIIU_CP_TCP_ATTACH      0x01
-#define WIIU_CP_TCP_DETACH      0x02
-#define WIIU_CP_TCP_PING        0xF0
-#define WIIU_CP_TCP_PONG        0xF1
+#define WIIU_CP_TCP_ATTACH                  0x01
+#define WIIU_CP_TCP_DETACH                  0x02
+#define WIIU_CP_TCP_PING                    0xF0
+#define WIIU_CP_TCP_PONG                    0xF1
 
-#define WIIU_CP_TCP_ATTACH_CONFIG_FOUND         0xE0
-#define WIIU_CP_TCP_ATTACH_CONFIG_NOT_FOUND     0xE1
-#define WIIU_CP_TCP_ATTACH_USER_DATA_OKAY       0xE8
-#define WIIU_CP_TCP_ATTACH_USER_DATA_BAD        0xE9
+#define WIIU_CP_TCP_ATTACH_CONFIG_FOUND     0xE0
+#define WIIU_CP_TCP_ATTACH_CONFIG_NOT_FOUND 0xE1
+#define WIIU_CP_TCP_ATTACH_USER_DATA_OKAY   0xE8
+#define WIIU_CP_TCP_ATTACH_USER_DATA_BAD    0xE9
 
-#define DEFAULT_TCP_PORT    8112
+#define DEFAULT_TCP_PORT                    8112
 
-class CPTCPServer: TCPServer {
+class CPTCPServer : TCPServer {
     friend class ControllerPatcher;
 
 private:
     static CPTCPServer *getInstance() {
-        if(!instance) {
+        if (!instance) {
 
             instance = new CPTCPServer(DEFAULT_TCP_PORT);
         }
@@ -62,7 +62,7 @@ private:
     }
 
     static void destroyInstance() {
-        if(instance) {
+        if (instance) {
             delete instance;
             instance = NULL;
         }
@@ -70,13 +70,13 @@ private:
 
     static int32_t getPriority() {
         int32_t priority = 28;
-        if(OSGetTitleID() == 0x00050000101c9300 || //The Legend of Zelda Breath of the Wild JPN
-                OSGetTitleID() == 0x00050000101c9400 || //The Legend of Zelda Breath of the Wild USA
-                OSGetTitleID() == 0x00050000101c9500 || //The Legend of Zelda Breath of the Wild EUR
-                OSGetTitleID() == 0x00050000101c9b00 || //The Binding of Isaac: Rebirth EUR
-                OSGetTitleID() == 0x00050000101a3c00) { //The Binding of Isaac: Rebirth USA
+        if (OSGetTitleID() == 0x00050000101c9300 || //The Legend of Zelda Breath of the Wild JPN
+            OSGetTitleID() == 0x00050000101c9400 || //The Legend of Zelda Breath of the Wild USA
+            OSGetTitleID() == 0x00050000101c9500 || //The Legend of Zelda Breath of the Wild EUR
+            OSGetTitleID() == 0x00050000101c9b00 || //The Binding of Isaac: Rebirth EUR
+            OSGetTitleID() == 0x00050000101a3c00) { //The Binding of Isaac: Rebirth USA
             priority = 10;
-            DEBUG_FUNCTION_LINE("This game needs higher thread priority. We set it to %d",priority);
+            DEBUG_FUNCTION_LINE("This game needs higher thread priority. We set it to %d", priority);
         }
         return priority;
     }
@@ -97,8 +97,7 @@ private:
 
     virtual void onConnectionClosed();
 
-    static CPTCPServer * instance;
-
+    static CPTCPServer *instance;
 };
 
 #endif //_TCPSERVER_WINDOW_H_

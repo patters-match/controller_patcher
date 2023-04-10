@@ -1,14 +1,14 @@
 #ifndef _TCPSERVER_H_
 #define _TCPSERVER_H_
 
+#include <netinet/in.h>
 #include <sys/select.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <system/CThread.h>
 #include <wut_types.h>
 
-#include <coreinit/cache.h>
 #include "utils/logger.h"
+#include <coreinit/cache.h>
 
 class TCPServer {
 public:
@@ -18,6 +18,7 @@ public:
     BOOL isConnected() {
         return connected;
     }
+
 protected:
     BOOL shouldExit() {
         return (exitThread == 1);
@@ -32,7 +33,7 @@ protected:
     }
 
     void setThreadPriority(int32_t priority) {
-        if(pThread != NULL){
+        if (pThread != NULL) {
             pThread->setThreadPriority(priority);
         }
     }
@@ -40,6 +41,7 @@ protected:
     struct sockaddr_in getSockAddr() {
         return sock_addr;
     }
+
 private:
     virtual void CloseSockets();
     virtual void ErrorHandling();
@@ -49,7 +51,7 @@ private:
 
     virtual BOOL acceptConnection() = 0;
 
-    virtual void onConnectionClosed(){
+    virtual void onConnectionClosed() {
         DEBUG_FUNCTION_LINE("Default onConnectionClosed ");
     }
 
@@ -59,14 +61,14 @@ private:
     virtual BOOL whileLoop() = 0;
 
     struct sockaddr_in sock_addr;
-    volatile int32_t sockfd = -1;
+    volatile int32_t sockfd   = -1;
     volatile int32_t clientfd = -1;
 
-    int32_t port = 0;
+    int32_t port            = 0;
     volatile BOOL connected = false;
 
     volatile int32_t exitThread = 0;
-    CThread *pThread = NULL;
+    CThread *pThread            = NULL;
 };
 
 #endif //_TCPSERVER_H_

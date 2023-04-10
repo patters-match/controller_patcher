@@ -22,46 +22,47 @@
 
 #include "ControllerPatcherIncludes.hpp"
 
-class ConfigReader{
+class ConfigReader {
     friend class ControllerPatcher;
     friend class ConfigParser;
-    private:
-        static ConfigReader *getInstance() {
-            if(!instance){
-                instance = new ConfigReader();
-            }
-            return instance;
+
+private:
+    static ConfigReader *getInstance() {
+        if (!instance) {
+            instance = new ConfigReader();
         }
+        return instance;
+    }
 
-        static void destroyInstance() {
-            if(instance){
-                delete instance;
-                instance = NULL;
-            }
+    static void destroyInstance() {
+        if (instance) {
+            delete instance;
+            instance = NULL;
         }
+    }
 
-        static int32_t getNumberOfLoadedFiles(){
-            return ConfigReader::numberValidFiles;
-        }
+    static int32_t getNumberOfLoadedFiles() {
+        return ConfigReader::numberValidFiles;
+    }
 
-        static void increaseNumberOfLoadedFiles(){
-            ConfigReader::numberValidFiles++;
-        }
-        BOOL ReadConfigs(std::string path);
-        static int32_t numberValidFiles;
+    static void increaseNumberOfLoadedFiles() {
+        ConfigReader::numberValidFiles++;
+    }
+    BOOL ReadConfigs(std::string path);
+    static int32_t numberValidFiles;
 
-        //!Constructor
-        ConfigReader();
-        //!Destructor
-        ~ConfigReader();
+    //!Constructor
+    ConfigReader();
+    //!Destructor
+    ~ConfigReader();
 
-        int32_t InitSDCard();
+    int32_t InitSDCard();
 
-        static ConfigReader *instance;
+    static ConfigReader *instance;
 
-        std::string loadFileToString(std::string path);
-        void processFileList(std::vector<std::string> path);
+    std::string loadFileToString(std::string path);
+    void processFileList(std::vector<std::string> path);
 
-        std::vector<std::string> ScanFolder(std::string path);
+    std::vector<std::string> ScanFolder(std::string path);
 };
 #endif

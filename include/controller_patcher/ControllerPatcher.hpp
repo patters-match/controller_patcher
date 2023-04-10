@@ -29,9 +29,9 @@
 
 #include <string>
 
+#include "ControllerPatcherDefs.h"
 #include <padscore/wpad.h>
 #include <vpad/input.h>
-#include "ControllerPatcherDefs.h"
 
 class ControllerPatcher {
 public:
@@ -48,7 +48,7 @@ public:
                              devoptabs! If no configuration should be loaded from the SD Card, set this parameter to NULL.
     **/
 
-    static BOOL Init(const char * pathToConfig);
+    static BOOL Init(const char *pathToConfig);
 
     /**
         \brief De-Initialises the controller_patcher
@@ -84,7 +84,7 @@ public:
         @return When the functions failed result < 0 is returned. If the result is == 0 the function was successful.
     **/
 
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR setProControllerDataFromHID(void * data,int32_t chan,int32_t mode = PRO_CONTROLLER_MODE_KPADDATA);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR setProControllerDataFromHID(void *data, int32_t chan, int32_t mode = PRO_CONTROLLER_MODE_KPADDATA);
 
 
     /**
@@ -96,7 +96,7 @@ public:
         @return When the functions failed result < 0 is returned. If the result is == 0 the function was successful.
     **/
 
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR setControllerDataFromHID(VPADStatus * buffer);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR setControllerDataFromHID(VPADStatus *buffer);
 
     /*-----------------------------------------------------------------------------------------------------------------------------------
     * Useful functions
@@ -144,7 +144,7 @@ public:
 
         @return When the functions failed result < 0 is returned. If the result is == 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR addControllerMapping(UController_Type type,ControllerMappingPADInfo config);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR addControllerMapping(UController_Type type, ControllerMappingPADInfo config);
 
 
     /**
@@ -158,7 +158,7 @@ public:
         @param mapping_slot: information about the added controller.
         @return When the functions failed result < 0 is returned. Otherwise a pointer to a ControllerMappingPADInfo is returned.
     **/
-    static ControllerMappingPADInfo * getControllerMappingInfo(UController_Type type,int32_t mapping_slot);
+    static ControllerMappingPADInfo *getControllerMappingInfo(UController_Type type, int32_t mapping_slot);
 
     /**
         Checks if a emulated controller is connected for the given controller type / mapping slot.
@@ -168,13 +168,13 @@ public:
 
         @return
     **/
-    static BOOL isControllerConnectedAndActive(UController_Type type,int32_t mapping_slot = 0);
+    static BOOL isControllerConnectedAndActive(UController_Type type, int32_t mapping_slot = 0);
 
     /**
         Search for a connected mouse and returns a pointer to it's data.
         @return A pointer to the first connected mouse that is found. NULL if no mouse is connected.
     **/
-    static HID_Mouse_Data * getMouseData();
+    static HID_Mouse_Data *getMouseData();
 
     /**
         Sets a rumble status for a controller.
@@ -184,7 +184,7 @@ public:
 
         @return When the functions failed result < 0 is returned. If the result is == 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR setRumble(UController_Type type,uint32_t status);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR setRumble(UController_Type type, uint32_t status);
 
     /**
         Reads the input of all connected HID devices. Each attached controller will write his date into given array until it's full.
@@ -194,7 +194,7 @@ public:
 
         @return When the functions failed result < 0 is returned. If the result is == 0 the function was successful. If the result is > 0 the number of stored sets in the array is returned.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR gettingInputAllDevices(InputData * output,int32_t array_size);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR gettingInputAllDevices(InputData *output, int32_t array_size);
 
     /**
         Remaps the buttons in the given \p VPADStatus pointer. InitButtonMapping() needs to be called before calling this. The information about the remapping is stored in the config_controller array.
@@ -204,7 +204,7 @@ public:
 
         @return When the functions failed result < 0 is returned. If the result is == 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR buttonRemapping(VPADStatus * buffer, int32_t buffer_count);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR buttonRemapping(VPADStatus *buffer, int32_t buffer_count);
 
     /**
         Prints the current pressed down buttons of the given \p VPADStatus pointer. Uses the utils/logger.c UDP logger..
@@ -213,9 +213,9 @@ public:
 
         @return When the functions failed result < 0 is returned. If the result is == 0 the function was successful.
     **/
-    static CONTROLLER_PATCHER_RESULT_OR_ERROR printVPADButtons(VPADStatus * buffer);
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR printVPADButtons(VPADStatus *buffer);
 
-    static std::string getIdentifierByVIDPID(uint16_t vid,uint16_t pid);
+    static std::string getIdentifierByVIDPID(uint16_t vid, uint16_t pid);
 
     static void destroyConfigHelper();
 
