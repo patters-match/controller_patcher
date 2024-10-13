@@ -26,7 +26,7 @@ int32_t FSUtils::LoadFileToMem(const char *filepath, uint8_t **inbuffer, uint32_
         return -2;
     }
 
-    uint32_t blocksize = 0x4000;
+    uint32_t blocksize = 0x20000;
     uint32_t done      = 0;
     int32_t readBytes  = 0;
 

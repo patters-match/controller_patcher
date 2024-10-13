@@ -485,22 +485,35 @@ void ControllerPatcher::ResetConfig() {
     ControllerPatcherUtils::setConfigValue((uint8_t *) &config_controller[xinput_slot][CONTRPS_VPAD_BUTTON_R_STICK_Y_INVERT], CONTROLLER_PATCHER_VALUE_SET, HID_XINPUT_STICK_R_Y[STICK_CONF_INVERT]);
 }
 
-BOOL ControllerPatcher::Init(const char *pathToConfig) {
-    OSDynLoad_Module handle;
-    void *kpad_ptr;
-    OSDynLoad_Acquire("padscore", &handle);
-    OSDynLoad_FindExport(handle, OS_DYNLOAD_EXPORT_FUNC, "KPADRead", &kpad_ptr);
-
-    gSamplingCallback = (WPADSamplingCallback) ((uint32_t) kpad_ptr + 0x1F0);
-    if (*(uint32_t *) gSamplingCallback != FIRST_INSTRUCTION_IN_SAMPLING_CALLBACK) {
-        //In Firmware <= 5.1.2 the offset changes
-        gSamplingCallback = (WPADSamplingCallback) ((uint32_t) kpad_ptr + 0x1F8);
-        if (*(uint32_t *) gSamplingCallback != FIRST_INSTRUCTION_IN_SAMPLING_CALLBACK) {
-            //Should never happen. I looked into the padscore.rpl of ALL firmwares.
-            gSamplingCallback = NULL;
+CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::UpdateSamplingFunctionAddress() {
+    OSDynLoad_Module handle      = nullptr;
+    WPADSamplingCallback newAddr = nullptr;
+    auto err                     = OSDynLoad_IsModuleLoaded("padscore", &handle);
+    if (err == OS_DYNLOAD_OK && handle != nullptr) {
+        void *kpad_ptr = nullptr;
+        if (OSDynLoad_FindExport(handle, OS_DYNLOAD_EXPORT_FUNC, "KPADRead", &kpad_ptr) == OS_DYNLOAD_OK) {
+            newAddr = (WPADSamplingCallback) ((uint32_t) kpad_ptr + 0x1F0);
+            if (*(uint32_t *) newAddr != FIRST_INSTRUCTION_IN_SAMPLING_CALLBACK) {
+                //In Firmware <= 5.1.2 the offset changes
+                newAddr = (WPADSamplingCallback) ((uint32_t) kpad_ptr + 0x1F8);
+                if (*(uint32_t *) newAddr != FIRST_INSTRUCTION_IN_SAMPLING_CALLBACK) {
+                    //Should never happen. I looked into the padscore.rpl of ALL firmwares.
+                    newAddr = nullptr;
+                }
+            }
         }
+    } else {
+        OSReport("Failed to update sampling addr\n");
     }
-    DEBUG_FUNCTION_LINE("Found the gSamplingCallback at %08X ", gSamplingCallback);
+    gSamplingCallback = newAddr;
+    return CONTROLLER_PATCHER_ERROR_NONE;
+}
+
+BOOL ControllerPatcher::Init(const char *pathToConfig) {
+    gSamplingCallback = nullptr;
+    if (gSamplingCallback != nullptr) {
+        DEBUG_FUNCTION_LINE("Found the gSamplingCallback at %08X ", gSamplingCallback);
+    }
 
     if (HID_DEBUG) {
         DEBUG_FUNCTION_LINE("Init called! ");
@@ -519,7 +532,6 @@ BOOL ControllerPatcher::Init(const char *pathToConfig) {
     }
 
     if (pathToConfig != NULL && gConfig_done != HID_SDCARD_READ) {
-        DEBUG_FUNCTION_LINE("Reading config files from SD Card");
         DEBUG_FUNCTION_LINE("Reading config files from SD Card");
         ConfigReader *reader = ConfigReader::getInstance();
 
@@ -547,9 +559,11 @@ void ControllerPatcher::startNetworkServer() {
 }
 
 void ControllerPatcher::stopNetworkServer() {
-    DEBUG_FUNCTION_LINE("called! ");
+    DEBUG_FUNCTION_LINE("called!!");
     UDPServer::destroyInstance();
+    DEBUG_FUNCTION_LINE("called! ");
     UDPClient::destroyInstance();
+    DEBUG_FUNCTION_LINE("called! ");
     CPTCPServer::destroyInstance();
 }
 
@@ -1138,7 +1152,7 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::resetCallbackData() {
     memset(gWPADConnectCallback, 0, sizeof(gWPADConnectCallback));
     memset(gKPADConnectCallback, 0, sizeof(gKPADConnectCallback));
     memset(gExtensionCallback, 0, sizeof(gExtensionCallback));
-    gSamplingCallback = 0;
+    gSamplingCallback = nullptr;
     gCallbackCooldown = 0;
     return CONTROLLER_PATCHER_ERROR_NONE;
 }
@@ -1199,15 +1213,15 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::handleCallbackData(BOOL bu
 
 CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::handleCallbackDataInternal(WPADChan chan) {
     if (gWPADConnectCallback[chan] != NULL) {
-        log_printf("Called WPAD connect callback for pro controller in slot %d!", chan + 1);
+        DEBUG_FUNCTION_LINE("Called WPAD connect callback for pro controller in slot %d!", chan + 1);
         gWPADConnectCallback[chan](chan, 0);
     }
     if (gKPADConnectCallback[chan] != NULL) {
-        log_printf("Called KPAD connect callback for pro controller in slot %d!", chan + 1);
+        DEBUG_FUNCTION_LINE("Called KPAD connect callback for pro controller in slot %d!", chan + 1);
         gKPADConnectCallback[chan](chan, 0);
     }
     if (gExtensionCallback[chan] != NULL) {
-        log_printf("Called extension callback for pro controller in slot %d!", chan + 1);
+        DEBUG_FUNCTION_LINE("Called extension callback for pro controller in slot %d!", chan + 1);
         gExtensionCallback[chan](chan, WPAD_EXT_PRO_CONTROLLER);
     }
     return CONTROLLER_PATCHER_ERROR_NONE;

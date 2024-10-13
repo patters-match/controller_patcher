@@ -29,6 +29,7 @@ CPTCPServer::CPTCPServer(int32_t port) : TCPServer(port, CPTCPServer::getPriorit
 }
 
 CPTCPServer::~CPTCPServer() {
+    DEBUG_FUNCTION_LINE("~CPTCPServer");
     CPTCPServer::AttachDetach(HID_DEVICE_DETACH);
 }
 

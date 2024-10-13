@@ -23,7 +23,7 @@
 
 ConfigParser::ConfigParser(std::string configData) {
     this->content      = configData;
-    this->contentLines = StringTools::stringSplit(content, "");
+    this->contentLines = StringTools::stringSplit(content, "\n");
 
     if (contentLines.empty()) {
         return;

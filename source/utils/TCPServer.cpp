@@ -20,17 +20,17 @@ TCPServer::TCPServer(int32_t port, int32_t priority) {
 
 TCPServer::~TCPServer() {
     CloseSockets();
-    //DEBUG_FUNCTION_LINE("Thread will be closed");
+    DEBUG_FUNCTION_LINE("Thread will be closed");
     exitThread = 1;
 
     ICInvalidateRange((void *) &exitThread, 4);
     DCFlushRange((void *) &exitThread, 4);
 
     if (pThread != NULL) {
-        //DEBUG_FUNCTION_LINE("Deleting it!");
+        DEBUG_FUNCTION_LINE("Deleting it!");
         delete pThread;
     }
-    //DEBUG_FUNCTION_LINE("Thread done");
+    DEBUG_FUNCTION_LINE("Thread done");
     pThread = NULL;
 }
 

@@ -43,12 +43,12 @@ UDPClient::UDPClient(uint32_t ip, int32_t port) {
 }
 
 UDPClient::~UDPClient() {
+    DEBUG_FUNCTION_LINE("~UDPClient");
     if (this->sockfd != -1) {
         close(sockfd);
     }
-    if (HID_DEBUG) {
-        log_printf("UDPClient::~UDPClient(line %d): Thread has been closed", __LINE__);
-    }
+
+    DEBUG_FUNCTION_LINE("UDPClient::~UDPClient(line %d): Thread has been closed", __LINE__);
 }
 
 BOOL UDPClient::sendData(char *data, int32_t length) {

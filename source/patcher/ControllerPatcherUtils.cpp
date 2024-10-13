@@ -1021,7 +1021,7 @@ ControllerMappingPAD *ControllerPatcherUtils::getControllerMappingByType(UContro
 }
 
 CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::doSampling(uint16_t deviceslot, uint8_t padslot = 0, BOOL ignorePadSlot = false) {
-    if (gSamplingCallback != NULL) {
+    if (gSamplingCallback != nullptr) {
         doSamplingSingle(WPAD_CHAN_0, deviceslot, padslot, ignorePadSlot);
         doSamplingSingle(WPAD_CHAN_1, deviceslot, padslot, ignorePadSlot);
         doSamplingSingle(WPAD_CHAN_2, deviceslot, padslot, ignorePadSlot);

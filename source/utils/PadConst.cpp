@@ -27,14 +27,14 @@ const uint8_t DEF_STICK_OFFSET_MINMAX   = CONTRPS_VPAD_BUTTON_L_STICK_X_MINMAX -
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //! Device names
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-const char *HID_GC_STRING         = "GameCube\nUSB-Adapter";
+const char *HID_GC_STRING         = "GameCube USB-Adapter";
 const char *HID_KEYBOARD_STRING   = "Keyboard";
 const char *HID_MOUSE_STRING      = "Mouse";
-const char *HID_DS3_STRING        = "DualShock 3\nController";
-const char *HID_DS4_STRING        = "DualShock 4\nController";
-const char *HID_NEW_DS4_STRING    = "DualShock 4\nController";
-const char *HID_XINPUT_STRING     = "XInput\nController";
-const char *HID_SWITCH_PRO_STRING = "Switch\nPro Controller";
+const char *HID_DS3_STRING        = "DualShock 3 Controller";
+const char *HID_DS4_STRING        = "DualShock 4 Controller";
+const char *HID_NEW_DS4_STRING    = "DualShock 4 Controller";
+const char *HID_XINPUT_STRING     = "XInput Controller";
+const char *HID_SWITCH_PRO_STRING = "Switch Pro Controller";
 
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //! GC-Adapter

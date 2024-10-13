@@ -128,7 +128,7 @@ private:
     **/
     static std::string getStringByVIDPID(uint16_t vid, uint16_t pid) {
         ConfigValues *cur_instance = getInstance();
-        if (cur_instance == NULL) return "";
+        if (cur_instance == nullptr) return StringTools::strfmt("0x%04X / 0x%04X", vid, pid);
         return cur_instance->getStringByVIDPIDEx(vid, pid);
     }
 

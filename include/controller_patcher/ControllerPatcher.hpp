@@ -108,6 +108,8 @@ public:
     **/
     static CONTROLLER_PATCHER_RESULT_OR_ERROR enableControllerMapping();
 
+    static CONTROLLER_PATCHER_RESULT_OR_ERROR UpdateSamplingFunctionAddress();
+
     /**
         Disbale the Controller mapping. Afterwards all connected controllers will be used for the gamepad.
         @return When the functions failed result < 0 is returned. If the result is == 0 the function was successful.

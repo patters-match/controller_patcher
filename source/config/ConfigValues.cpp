@@ -53,7 +53,7 @@ BOOL ConfigValues::setIfValueIsAControllerPresetEx(std::string value, int32_t sl
 
 //We need this function here so we can use preset sticks.
 BOOL ConfigValues::setIfValueIsPreset(std::map<std::string, const uint8_t *> values, std::string possibleValue, int32_t slot, int32_t keyslot) {
-    if (slot > gHIDMaxDevices || slot < 0 || keyslot < 0 || keyslot >= CONTRPS_MAX_VALUE) {
+    if (slot >= gHIDMaxDevices || slot < 0 || keyslot < 0 || keyslot >= CONTRPS_MAX_VALUE) {
         return false;
     }
     const uint8_t *values_ = NULL;
@@ -127,7 +127,7 @@ std::string ConfigValues::getStringByVIDPIDEx(uint16_t vid, uint16_t pid) {
     if (it != deviceNames.end()) {
         result = it->second;
     } else {
-        result = StringTools::strfmt("VID: 0x%04X\nPID: 0x%04X", vid, pid);
+        result = StringTools::strfmt("0x%04X / 0x%04X", vid, pid);
     }
     return result;
 }

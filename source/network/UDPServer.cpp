@@ -18,7 +18,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <coreinit/cache.h>
 #include <utils/logger.h>
 
 #define MAX_UDP_SIZE 0x578
@@ -45,9 +45,11 @@ UDPServer::UDPServer(int32_t port) {
 }
 
 UDPServer::~UDPServer() {
+
     CThread *pThreadPointer = UDPServer::pThread;
     if (pThreadPointer != NULL) {
         exitThread = 1;
+        OSMemoryBarrier();
         if (pThreadPointer != NULL) {
             delete pThreadPointer;
             UDPServer::pThread = NULL;
@@ -57,9 +59,9 @@ UDPServer::~UDPServer() {
             this->sockfd = -1;
         }
     }
-    if (HID_DEBUG) {
+
         DEBUG_FUNCTION_LINE("Thread has been closed");
-    }
+
 }
 
 void UDPServer::StartUDPThread(UDPServer *server) {
