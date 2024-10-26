@@ -1166,7 +1166,7 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::setKPADConnectedCallback(i
     return CONTROLLER_PATCHER_ERROR_NONE;
 }
 
-CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::setKPADExtensionCallback(int32_t chan, WPADConnectCallback callback) {
+CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::setKPADExtensionCallback(int32_t chan, WPADExtensionCallback callback) {
     if (chan >= 4) {
         return CONTROLLER_PATCHER_ERROR_INVALID_CHAN;
     }

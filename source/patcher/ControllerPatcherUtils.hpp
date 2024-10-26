@@ -168,6 +168,16 @@ private:
      * Stick functions
      *---------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     /**
+        \brief Sign-extend negative numbers of lower bit lengths into int16_t type
+
+        \param input       Input value (from HID data)
+        \param bit_length  Bit length of this input number
+
+        \return The number in int16_t type
+    **/
+    static int16_t signExtendValue(uint16_t input, uint8_t bit_length);
+
+    /**
         \brief Normalizes the stick to valid values.
 
         \param stick  Pointer to the stick that will be normalized
@@ -188,8 +198,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static float convertAnalogValue(uint8_t value, uint8_t default_val, uint8_t min, uint8_t max, uint8_t invert, uint8_t deadzone);
-
+    static float convertAnalogValue(int32_t value, int32_t default_val, int32_t min, int32_t max, uint8_t invert,uint8_t deadzone);
     /**
         \brief Calculates a the stick data (VPADVec2D) from given digital direction.
 
