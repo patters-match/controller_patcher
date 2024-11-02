@@ -491,219 +491,33 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::convertAnalogSticks(H
         uint8_t *cur_data = &data->data_union.controller.cur_hid_data[0];
         if (cur_data == NULL) return CONTROLLER_PATCHER_ERROR_NULL_POINTER;
 
-        int32_t deadzone = 0;
+        processStickAxis(buffer->leftStick.x, cur_data, deviceslot,
+                         CONTRPS_VPAD_BUTTON_L_STICK_X, CONTRPS_VPAD_BUTTON_L_STICK_X_DEADZONE,
+                         CONTRPS_VPAD_BUTTON_L_STICK_X_MINMAX, CONTRPS_VPAD_BUTTON_L_STICK_X_BIT_LENGTH,
+                         CONTRPS_VPAD_BUTTON_L_STICK_X_BIT_OFFSET, CONTRPS_VPAD_BUTTON_L_STICK_X_MINMAX_MSB,
+                         CONTRPS_VPAD_BUTTON_L_STICK_X_DEFAULT_MSB, CONTRPS_VPAD_BUTTON_L_STICK_X_SIGNED,
+                         CONTRPS_VPAD_BUTTON_L_STICK_X_INVERT);
 
-        uint16_t l_stick_x_axis_input = 0;
-        uint16_t l_stick_y_axis_input = 0;
-        uint16_t r_stick_x_axis_input = 0;
-        uint16_t r_stick_y_axis_input = 0;
-        int16_t l_stick_x_axis_signed = 0;
-        int16_t l_stick_y_axis_signed = 0;
-        int16_t r_stick_x_axis_signed = 0;
-        int16_t r_stick_y_axis_signed = 0;
+        processStickAxis(buffer->leftStick.y, cur_data, deviceslot,
+                         CONTRPS_VPAD_BUTTON_L_STICK_Y, CONTRPS_VPAD_BUTTON_L_STICK_Y_DEADZONE,
+                         CONTRPS_VPAD_BUTTON_L_STICK_Y_MINMAX, CONTRPS_VPAD_BUTTON_L_STICK_Y_BIT_LENGTH,
+                         CONTRPS_VPAD_BUTTON_L_STICK_Y_BIT_OFFSET, CONTRPS_VPAD_BUTTON_L_STICK_Y_MINMAX_MSB,
+                         CONTRPS_VPAD_BUTTON_L_STICK_Y_DEFAULT_MSB, CONTRPS_VPAD_BUTTON_L_STICK_Y_SIGNED,
+                         CONTRPS_VPAD_BUTTON_L_STICK_Y_INVERT);
 
-        uint16_t l_stick_x_axis_min = 0;
-        uint16_t l_stick_x_axis_max = 0;
-        uint16_t l_stick_x_axis_def = 0;
-        uint16_t l_stick_y_axis_min = 0;
-        uint16_t l_stick_y_axis_max = 0;
-        uint16_t l_stick_y_axis_def = 0;
-        uint16_t r_stick_x_axis_min = 0;
-        uint16_t r_stick_x_axis_max = 0;
-        uint16_t r_stick_x_axis_def = 0;
-        uint16_t r_stick_y_axis_min = 0;
-        uint16_t r_stick_y_axis_max = 0;
-        uint16_t r_stick_y_axis_def = 0;
+        processStickAxis(buffer->rightStick.x, cur_data, deviceslot,
+                         CONTRPS_VPAD_BUTTON_R_STICK_X, CONTRPS_VPAD_BUTTON_R_STICK_X_DEADZONE,
+                         CONTRPS_VPAD_BUTTON_R_STICK_X_MINMAX, CONTRPS_VPAD_BUTTON_R_STICK_X_BIT_LENGTH,
+                         CONTRPS_VPAD_BUTTON_R_STICK_X_BIT_OFFSET, CONTRPS_VPAD_BUTTON_R_STICK_X_MINMAX_MSB,
+                         CONTRPS_VPAD_BUTTON_R_STICK_X_DEFAULT_MSB, CONTRPS_VPAD_BUTTON_R_STICK_X_SIGNED,
+                         CONTRPS_VPAD_BUTTON_R_STICK_X_INVERT);
 
-        if(config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X][0] != CONTROLLER_PATCHER_INVALIDVALUE){
-            if(config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_DEADZONE][0] == CONTROLLER_PATCHER_VALUE_SET){
-                deadzone = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_DEADZONE][1];
-            }
-            // Read 1st byte of axis HID data & Min/Max/Default values
-            l_stick_x_axis_input = cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X][0]];
-            l_stick_x_axis_min   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_MINMAX][0];
-            l_stick_x_axis_max   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_MINMAX][1];
-            l_stick_x_axis_def   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X][1];
-            
-            if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_BIT_LENGTH][0] == CONTROLLER_PATCHER_VALUE_SET && config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_BIT_LENGTH][1] > 8){
-                // Need more than 8 bits, read 2nd byte of axis HID data
-                l_stick_x_axis_input |= (cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X][0] + 1] << 8);
-
-                if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_BIT_OFFSET][0] == CONTROLLER_PATCHER_VALUE_SET){
-                    // Shift right to trim unwanted leading bits
-                    l_stick_x_axis_input >>= config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_BIT_OFFSET][1];
-                }
-                // Mask off unwanted trailing bits
-                l_stick_x_axis_input &= ((1 << config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_BIT_LENGTH][1]) - 1);
-
-                // Combine most significant bytes of Min/Max/Default values
-                l_stick_x_axis_min |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_MINMAX_MSB][0] << 8);
-                l_stick_x_axis_max |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_MINMAX_MSB][1] << 8);
-                if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_DEFAULT_MSB][0] == CONTROLLER_PATCHER_VALUE_SET){
-                    l_stick_x_axis_def |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_DEFAULT_MSB][1] << 8);
-                }
-            }
-
-            if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_SIGNED][1]) {
-                // Extend sign bits if axis HID data is signed
-                l_stick_x_axis_signed = signExtendValue(l_stick_x_axis_input, config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_BIT_LENGTH][1]);
-
-                buffer->leftStick.x += convertAnalogValue(l_stick_x_axis_signed,
-                                                       (int16_t)l_stick_x_axis_def,
-                                                       (int16_t)l_stick_x_axis_min,
-                                                       (int16_t)l_stick_x_axis_max,
-                                                       config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_INVERT][1],
-                                                       deadzone);
-            } else {
-                buffer->leftStick.x += convertAnalogValue(l_stick_x_axis_input,
-                                                       l_stick_x_axis_def,
-                                                       l_stick_x_axis_min,
-                                                       l_stick_x_axis_max,
-                                                       config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_INVERT][1],
-                                                       deadzone);
-            }
-        }
-
-        if(config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y][0] != CONTROLLER_PATCHER_INVALIDVALUE){
-            deadzone = 0;
-            if(config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_DEADZONE][0] == CONTROLLER_PATCHER_VALUE_SET){
-                deadzone = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_DEADZONE][1];
-            }
-            // Read 1st byte of axis HID data & Min/Max/Default values
-            l_stick_y_axis_input = cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y][0]];
-            l_stick_y_axis_min   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_MINMAX][0];
-            l_stick_y_axis_max   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_MINMAX][1];
-            l_stick_y_axis_def   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y][1];
-        
-            if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_BIT_LENGTH][0] == CONTROLLER_PATCHER_VALUE_SET && config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_BIT_LENGTH][1] > 8){
-                // Need more than 8 bits, read 2nd byte of axis HID data
-                l_stick_y_axis_input |= (cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y][0] + 1] << 8);
-                if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_BIT_OFFSET][0] == CONTROLLER_PATCHER_VALUE_SET){
-                    // Shift right to trim unwanted leading bits
-                    l_stick_y_axis_input >>= config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_BIT_OFFSET][1];
-                }
-                // Mask off unwanted trailing bits
-                l_stick_y_axis_input &= ((1 << config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_BIT_LENGTH][1]) - 1);
-
-                // Combine most significant bytes of Min/Max/Default values
-                l_stick_y_axis_min |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_MINMAX_MSB][0] << 8);
-                l_stick_y_axis_max |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_MINMAX_MSB][1] << 8);
-                if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_DEFAULT_MSB][0] == CONTROLLER_PATCHER_VALUE_SET){
-                    l_stick_y_axis_def |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_DEFAULT_MSB][1] << 8);
-                }
-            }
-            if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_SIGNED][1]) {
-                // Extend sign bits if axis HID data is signed
-                l_stick_y_axis_signed = signExtendValue(l_stick_y_axis_input, config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_BIT_LENGTH][1]);
-                buffer->leftStick.y += convertAnalogValue(l_stick_y_axis_signed,
-                                                       (int16_t)l_stick_y_axis_def,
-                                                       (int16_t)l_stick_y_axis_min,
-                                                       (int16_t)l_stick_y_axis_max,
-                                                       config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_INVERT][1],
-                                                       deadzone);
-            } else {
-                buffer->leftStick.y += convertAnalogValue(l_stick_y_axis_input,
-                                                       l_stick_y_axis_def,
-                                                       l_stick_y_axis_min,
-                                                       l_stick_y_axis_max,
-                                                       config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_Y_INVERT][1],
-                                                       deadzone);
-            }
-        }
-
-        if(config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X][0] != CONTROLLER_PATCHER_INVALIDVALUE){
-            deadzone = 0;
-            if(config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_DEADZONE][0] == CONTROLLER_PATCHER_VALUE_SET){
-                deadzone = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_DEADZONE][1];
-            }
-            // Read 1st byte of axis HID data & Min/Max/Default values
-            r_stick_x_axis_input = cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X][0]];
-            r_stick_x_axis_min   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_MINMAX][0];
-            r_stick_x_axis_max   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_MINMAX][1];
-            r_stick_x_axis_def   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X][1];
-            
-            if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_BIT_LENGTH][0] == CONTROLLER_PATCHER_VALUE_SET && config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_BIT_LENGTH][1] > 8){
-                // Need more than 8 bits, read 2nd byte of axis HID data
-                r_stick_x_axis_input |= (cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X][0] + 1] << 8);
-                if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_BIT_OFFSET][0] == CONTROLLER_PATCHER_VALUE_SET){
-                    // Shift right to trim unwanted leading bits
-                    r_stick_x_axis_input >>= config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_BIT_OFFSET][1];
-                }
-                // Mask off unwanted trailing bits
-                r_stick_x_axis_input &= ((1 << config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_BIT_LENGTH][1]) - 1);
-
-                // Combine most significant bytes of Min/Max/Default values
-                r_stick_x_axis_min |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_MINMAX_MSB][0] << 8);
-                r_stick_x_axis_max |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_MINMAX_MSB][1] << 8);
-                if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_DEFAULT_MSB][0] == CONTROLLER_PATCHER_VALUE_SET){
-                    r_stick_x_axis_def |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_DEFAULT_MSB][1] << 8);
-                }
-            }
-            if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_SIGNED][1]) {
-                // Extend sign bits if axis HID data is signed
-                r_stick_x_axis_signed = signExtendValue(r_stick_x_axis_input, config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_BIT_LENGTH][1]);
-                buffer->rightStick.x += convertAnalogValue(r_stick_x_axis_signed,
-                                                       (int16_t)r_stick_x_axis_def,
-                                                       (int16_t)r_stick_x_axis_min,
-                                                       (int16_t)r_stick_x_axis_max,
-                                                       config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_INVERT][1],
-                                                       deadzone);
-            } else {
-                buffer->rightStick.x += convertAnalogValue(r_stick_x_axis_input,
-                                                       r_stick_x_axis_def,
-                                                       r_stick_x_axis_min,
-                                                       r_stick_x_axis_max,
-                                                       config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_X_INVERT][1],
-                                                       deadzone);
-            }
-        }
-
-        if(config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y][0] != CONTROLLER_PATCHER_INVALIDVALUE){
-            deadzone = 0;
-            if(config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_DEADZONE][0] == CONTROLLER_PATCHER_VALUE_SET){
-                deadzone = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_DEADZONE][1];
-            }
-            // Read 1st byte of axis HID data & Min/Max/Default values
-            r_stick_y_axis_input = cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y][0]];
-            r_stick_y_axis_min   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_MINMAX][0];
-            r_stick_y_axis_max   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_MINMAX][1];
-            r_stick_y_axis_def   = config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y][1];
-            
-            if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_BIT_LENGTH][0] == CONTROLLER_PATCHER_VALUE_SET && config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_BIT_LENGTH][1] > 8){
-                // Need more than 8 bits, read 2nd byte of axis HID data
-                r_stick_y_axis_input |= (cur_data[config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y][0] + 1] << 8);
-                if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_BIT_OFFSET][0] == CONTROLLER_PATCHER_VALUE_SET){
-                    // Shift right to trim unwanted leading bits
-                    r_stick_y_axis_input >>= config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_BIT_OFFSET][1];
-                }
-                // Mask off unwanted trailing bits
-                r_stick_y_axis_input &= ((1 << config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_BIT_LENGTH][1]) - 1);
-
-                // Combine most significant bytes of Min/Max/Default values
-                r_stick_y_axis_min |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_MINMAX_MSB][0] << 8);
-                r_stick_y_axis_max |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_MINMAX_MSB][1] << 8);
-                if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_DEFAULT_MSB][0] == CONTROLLER_PATCHER_VALUE_SET){
-                    r_stick_y_axis_def |= (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_DEFAULT_MSB][1] << 8);
-                }
-            }
-            if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_SIGNED][1]) {
-                // Extend sign bits if axis HID data is signed
-                r_stick_y_axis_signed = signExtendValue(r_stick_y_axis_input, config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_BIT_LENGTH][1]);
-                buffer->rightStick.y += convertAnalogValue(r_stick_y_axis_signed,
-                                                       (int16_t)r_stick_y_axis_def,
-                                                       (int16_t)r_stick_y_axis_min,
-                                                       (int16_t)r_stick_y_axis_max,
-                                                       config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_INVERT][1],
-                                                       deadzone);
-            } else {
-                buffer->rightStick.y += convertAnalogValue(r_stick_y_axis_input,
-                                                       r_stick_y_axis_def,
-                                                       r_stick_y_axis_min,
-                                                       r_stick_y_axis_max,
-                                                       config_controller[deviceslot][CONTRPS_VPAD_BUTTON_R_STICK_Y_INVERT][1],
-                                                       deadzone);
-            }
-        }
+        processStickAxis(buffer->rightStick.y, cur_data, deviceslot,
+                         CONTRPS_VPAD_BUTTON_R_STICK_Y, CONTRPS_VPAD_BUTTON_R_STICK_Y_DEADZONE,
+                         CONTRPS_VPAD_BUTTON_R_STICK_Y_MINMAX, CONTRPS_VPAD_BUTTON_R_STICK_Y_BIT_LENGTH,
+                         CONTRPS_VPAD_BUTTON_R_STICK_Y_BIT_OFFSET, CONTRPS_VPAD_BUTTON_R_STICK_Y_MINMAX_MSB,
+                         CONTRPS_VPAD_BUTTON_R_STICK_Y_DEFAULT_MSB, CONTRPS_VPAD_BUTTON_R_STICK_Y_SIGNED,
+                         CONTRPS_VPAD_BUTTON_R_STICK_Y_INVERT);
 
         uint8_t stick_values = 0;
 
@@ -794,42 +608,67 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::convertAnalogSticks(H
                 }
             }
         }
-
-        // if (config_controller[deviceslot][CONTRPS_VPAD_BUTTON_L_STICK_X_SIGNED][1]) {
-        //     int16_t temp_l_stick_x_axis_min = (int16_t)l_stick_x_axis_min;
-        //     int16_t temp_l_stick_y_axis_min = (int16_t)l_stick_y_axis_min;
-        //     int16_t temp_l_stick_x_axis_def = (int16_t)l_stick_x_axis_def;
-        //     int16_t temp_l_stick_y_axis_def = (int16_t)l_stick_y_axis_def;
-        //     int16_t temp_l_stick_x_axis_max = (int16_t)l_stick_x_axis_max;
-        //     int16_t temp_l_stick_y_axis_max = (int16_t)l_stick_y_axis_max;
-        //     log_printf(
-        //         "MinX %+5d %04X DefX %+5d MaxX %+5d %04X MinY %+5d %04X DefY %+5d MaxY %+5d %04X X %+1.3f(%+5d %04X) Y %+1.3f(%+5d %04X)\n",
-        //         temp_l_stick_x_axis_min,l_stick_x_axis_min,
-        //         temp_l_stick_x_axis_def,
-        //         temp_l_stick_x_axis_max,l_stick_x_axis_max,
-        //         temp_l_stick_y_axis_min,l_stick_y_axis_min,
-        //         temp_l_stick_y_axis_def,
-        //         temp_l_stick_y_axis_max,l_stick_y_axis_max,
-        //         buffer->leftStick.x,l_stick_x_axis_signed,l_stick_x_axis_signed,
-        //         buffer->leftStick.y,l_stick_y_axis_signed,l_stick_y_axis_signed
-        //     );
-        // } else {
-        //     log_printf(
-        //         "MinX %+5d %04X DefX %+5d MaxX %+5d %04X MinY %+5d %04X DefY %+5d MaxY %+5d %04X X %+1.3f(%+5d %04X) Y %+1.3f(%+5d %04X)\n",
-        //         l_stick_x_axis_min,l_stick_x_axis_min,
-        //         l_stick_x_axis_def,
-        //         l_stick_x_axis_max,l_stick_x_axis_max,
-        //         l_stick_y_axis_min,l_stick_y_axis_min,
-        //         l_stick_y_axis_def,
-        //         l_stick_y_axis_max,l_stick_y_axis_max,
-        //         buffer->leftStick.x,l_stick_x_axis_input,l_stick_x_axis_input,
-        //         buffer->leftStick.y,l_stick_y_axis_input,l_stick_y_axis_input
-        //     );
-        // }
-
     }
     return CONTROLLER_PATCHER_ERROR_NONE;
 }
+
+CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::processStickAxis(
+    float &buffer_axis, const uint8_t *cur_data, int32_t deviceslot,
+    uint8_t axis_code, uint8_t axis_deadzone_code,
+    uint8_t axis_minmax_code, uint8_t axis_bit_length_code,
+    uint8_t axis_bit_offset_code, uint8_t axis_minmax_msb_code,
+    uint8_t axis_default_msb_code, uint8_t axis_signed_code,
+    uint8_t axis_invert_code) {
+
+    if (cur_data == NULL) return CONTROLLER_PATCHER_ERROR_NULL_POINTER;
+
+    if (config_controller[deviceslot][axis_code][0] != CONTROLLER_PATCHER_INVALIDVALUE) {
+        uint8_t deadzone = (config_controller[deviceslot][axis_deadzone_code][0] == CONTROLLER_PATCHER_VALUE_SET) 
+                           ? config_controller[deviceslot][axis_deadzone_code][1] 
+                           : 0;
+
+        // Read 1st byte of axis HID data & Min/Max/Default values
+        uint16_t axis_input = cur_data[config_controller[deviceslot][axis_code][0]];
+        uint16_t axis_min = config_controller[deviceslot][axis_minmax_code][0];
+        uint16_t axis_max = config_controller[deviceslot][axis_minmax_code][1];
+        uint16_t axis_default = config_controller[deviceslot][axis_code][1];
+
+        // Axis report larger than 8 bits?
+        if (config_controller[deviceslot][axis_bit_length_code][0] == CONTROLLER_PATCHER_VALUE_SET && 
+            config_controller[deviceslot][axis_bit_length_code][1] > 8) {
+
+            // Read 2nd byte of axis HID data
+            axis_input |= (cur_data[config_controller[deviceslot][axis_code][0] + 1] << 8);
+
+            if (config_controller[deviceslot][axis_bit_offset_code][0] == CONTROLLER_PATCHER_VALUE_SET) {
+                // Shift right to trim unwanted leading bits
+                axis_input >>= config_controller[deviceslot][axis_bit_offset_code][1];
+            }
+
+            // Mask off unwanted trailing bits
+            axis_input &= ((1 << config_controller[deviceslot][axis_bit_length_code][1]) - 1);
+
+            // Combine most significant bytes of Min/Max/Default values
+            axis_min |= (config_controller[deviceslot][axis_minmax_msb_code][0] << 8);
+            axis_max |= (config_controller[deviceslot][axis_minmax_msb_code][1] << 8);
+            if (config_controller[deviceslot][axis_default_msb_code][0] == CONTROLLER_PATCHER_VALUE_SET) {
+                axis_default |= (config_controller[deviceslot][axis_default_msb_code][1] << 8);
+            }
+        }
+
+        if (config_controller[deviceslot][axis_signed_code][1]) {
+            // Extend sign bits if axis HID data is signed
+            int16_t signed_input = signExtendValue(axis_input, config_controller[deviceslot][axis_bit_length_code][1]);
+            buffer_axis += convertAnalogValue(signed_input, (int16_t)axis_default, (int16_t)axis_min, (int16_t)axis_max,
+                                              config_controller[deviceslot][axis_invert_code][1], deadzone);
+        } else {
+            buffer_axis += convertAnalogValue(axis_input, axis_default, axis_min, axis_max, 
+                                              config_controller[deviceslot][axis_invert_code][1], deadzone);
+        }
+    }
+    return CONTROLLER_PATCHER_ERROR_NONE;
+}
+
 
 CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::setEmulatedSticks(VPADStatus *buffer, uint32_t *last_emulatedSticks) {
     if (buffer == NULL || last_emulatedSticks == NULL) return CONTROLLER_PATCHER_ERROR_NULL_POINTER;
