@@ -512,7 +512,7 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::UpdateSamplingFunctionAddr
 BOOL ControllerPatcher::Init(const char *pathToConfig) {
     gSamplingCallback = nullptr;
     if (gSamplingCallback != nullptr) {
-        DEBUG_FUNCTION_LINE("Found the gSamplingCallback at %08X ", gSamplingCallback);
+        DEBUG_FUNCTION_LINE("Found the gSamplingCallback at %08X ", (uint32_t)(void*)gSamplingCallback);
     }
 
     if (HID_DEBUG) {
@@ -1214,11 +1214,11 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::handleCallbackData(BOOL bu
 CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::handleCallbackDataInternal(WPADChan chan) {
     if (gWPADConnectCallback[chan] != NULL) {
         DEBUG_FUNCTION_LINE("Called WPAD connect callback for pro controller in slot %d!", chan + 1);
-        gWPADConnectCallback[chan](chan, 0);
+        gWPADConnectCallback[chan](chan, (WPADError)0);
     }
     if (gKPADConnectCallback[chan] != NULL) {
         DEBUG_FUNCTION_LINE("Called KPAD connect callback for pro controller in slot %d!", chan + 1);
-        gKPADConnectCallback[chan](chan, 0);
+        gKPADConnectCallback[chan](chan, (WPADError)0);
     }
     if (gExtensionCallback[chan] != NULL) {
         DEBUG_FUNCTION_LINE("Called extension callback for pro controller in slot %d!", chan + 1);

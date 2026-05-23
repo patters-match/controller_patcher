@@ -886,9 +886,8 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::translateToProWPADRea
 
     pro_buffer->buttons = buttons_hold;
 
-    pro_buffer->dataFormat    = WPAD_FMT_PRO_CONTROLLER;
-    pro_buffer->err           = 0x00;
-    pro_buffer->extensionType = WPAD_EXT_PRO_CONTROLLER;
+    pro_buffer->core.error         = 0x00;
+    pro_buffer->core.extensionType = WPAD_EXT_PRO_CONTROLLER;
 
     return CONTROLLER_PATCHER_ERROR_NONE;
 }
