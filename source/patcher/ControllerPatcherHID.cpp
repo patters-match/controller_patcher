@@ -349,8 +349,6 @@ int32_t ControllerPatcherHID::AttachDetachCallback(HIDClient *p_client, HIDDevic
 }
 
 void ControllerPatcherHID::HIDReadCallback(uint32_t handle, unsigned char *buf, uint32_t bytes_transfered, my_cb_user *usr) {
-    ControllerPatcherUtils::doSampling(usr->slotdata.deviceslot, usr->pad_slot, false);
-
     //DEBUG_FUNCTION_LINE("my_read_cbInternal: %d %08X %d",bytes_transfered,usr->slotdata.hidmask,usr->slotdata.deviceslot);
     if (usr->slotdata.hidmask == gHID_LIST_GC) {
 
@@ -369,6 +367,7 @@ void ControllerPatcherHID::HIDReadCallback(uint32_t handle, unsigned char *buf, 
         DEBUG_FUNCTION_LINE("GC3 %08X: %02X %02X %02X %02X %02X %02X %02X %02X %02X ",       buf[i*9+0],buf[i*9+1],buf[i*9+2],buf[i*9+3],buf[i*9+4],buf[i*9+5],buf[i*9+6],buf[i*9+7],buf[i*9+8]);i++;
         DEBUG_FUNCTION_LINE("GC4 %08X: %02X %02X %02X %02X %02X %02X %02X %02X %02X \n",     buf[i*9+0],buf[i*9+1],buf[i*9+2],buf[i*9+3],buf[i*9+4],buf[i*9+5],buf[i*9+6],buf[i*9+7],buf[i*9+8]);*/
         HIDGCRumble(handle, usr);
+        ControllerPatcherUtils::doSampling(usr->slotdata.deviceslot, usr->pad_slot, false);
     } else if (usr->slotdata.hidmask != 0) {
         //Depending on how the switch pro controller is connected, it has a different data format. At first we had the Bluetooth version, so we need to convert
         //the USB one into it now. (When it's connected via USB). The network client always sends the BT version, even if connected via USB to the PC.
@@ -481,7 +480,7 @@ void ControllerPatcherHID::HIDReadCallback(uint32_t handle, unsigned char *buf, 
             DCFlushRange(&gHID_Devices[usr->slotdata.deviceslot].pad_data[slot], sizeof(HID_Data));
 
             data_ptr = &(gHID_Devices[usr->slotdata.deviceslot].pad_data[slot]);
-
+            ControllerPatcherUtils::doSampling(usr->slotdata.deviceslot, usr->pad_slot, false);
             HIDRumble(handle, usr, slot);
         }
     }
