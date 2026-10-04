@@ -202,6 +202,13 @@ private:
     static int16_t signExtendValue(uint16_t input, uint8_t bit_length);
 
     /**
+        \brief Fills in defaults for the optional multi-byte stick axis settings of every device slot, so processStickAxis
+               can use them without checks: *_BIT_LENGTH becomes 8 when unset or outside 8 to 16, *_SIGNED becomes false
+               when unset. Must be called whenever the config has been (re)loaded.
+    **/
+    static void normalizeStickAxisConfig();
+
+    /**
         \brief Normalizes the stick to valid values.
 
         \param stick  Pointer to the stick that will be normalized

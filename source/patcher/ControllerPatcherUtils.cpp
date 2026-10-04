@@ -373,6 +373,21 @@ int16_t ControllerPatcherUtils::signExtendValue(uint16_t input, uint8_t bit_leng
     }
 }
 
+void ControllerPatcherUtils::normalizeStickAxisConfig() {
+    for (int32_t slot = 0; slot < gHIDMaxDevices; slot++) {
+        for (int32_t axis = 0; axis < 4; axis++) { // L_X, L_Y, R_X, R_Y
+            uint8_t *bit_length = config_controller[slot][CONTRPS_VPAD_BUTTON_L_STICK_X_BIT_LENGTH + axis];
+            if (bit_length[0] != CONTROLLER_PATCHER_VALUE_SET || bit_length[1] < 8 || bit_length[1] > 16) {
+                setConfigValue(bit_length, CONTROLLER_PATCHER_VALUE_SET, 8);
+            }
+            uint8_t *is_signed = config_controller[slot][CONTRPS_VPAD_BUTTON_L_STICK_X_SIGNED + axis];
+            if (is_signed[0] != CONTROLLER_PATCHER_VALUE_SET) {
+                setConfigValue(is_signed, CONTROLLER_PATCHER_VALUE_SET, 0);
+            }
+        }
+    }
+}
+
 CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::normalizeStickValues(VPADVec2D *stick) {
     if (stick == NULL) return CONTROLLER_PATCHER_ERROR_NULL_POINTER;
 
@@ -633,9 +648,12 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::processStickAxis(
         uint16_t axis_max     = config_controller[deviceslot][axis_minmax_code][1];
         uint16_t axis_default = config_controller[deviceslot][axis_code][1];
 
+        // Always valid, see normalizeStickAxisConfig
+        uint8_t axis_bit_length = config_controller[deviceslot][axis_bit_length_code][1];
+        bool axis_signed        = config_controller[deviceslot][axis_signed_code][1];
+
         // Axis report larger than 8 bits?
-        if (config_controller[deviceslot][axis_bit_length_code][0] == CONTROLLER_PATCHER_VALUE_SET &&
-            config_controller[deviceslot][axis_bit_length_code][1] > 8) {
+        if (axis_bit_length > 8) {
 
             // Read 2nd byte of axis HID data
             axis_input |= (cur_data[config_controller[deviceslot][axis_code][0] + 1] << 8);
@@ -646,7 +664,7 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::processStickAxis(
             }
 
             // Mask off unwanted trailing bits
-            axis_input &= ((1 << config_controller[deviceslot][axis_bit_length_code][1]) - 1);
+            axis_input &= ((1 << axis_bit_length) - 1);
 
             // Combine most significant bytes of Min/Max/Default values
             axis_min |= (config_controller[deviceslot][axis_minmax_msb_code][0] << 8);
@@ -656,9 +674,9 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::processStickAxis(
             }
         }
 
-        if (config_controller[deviceslot][axis_signed_code][1]) {
+        if (axis_signed) {
             // Extend sign bits if axis HID data is signed
-            int16_t signed_input = signExtendValue(axis_input, config_controller[deviceslot][axis_bit_length_code][1]);
+            int16_t signed_input = signExtendValue(axis_input, axis_bit_length);
             buffer_axis += convertAnalogValue(signed_input, (int16_t) axis_default, (int16_t) axis_min, (int16_t) axis_max,
                                               config_controller[deviceslot][axis_invert_code][1], deadzone);
         } else {

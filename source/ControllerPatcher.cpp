@@ -483,6 +483,8 @@ void ControllerPatcher::ResetConfig() {
     ControllerPatcherUtils::setConfigValue((uint8_t *) &config_controller[xinput_slot][CONTRPS_VPAD_BUTTON_R_STICK_Y_DEADZONE], CONTROLLER_PATCHER_VALUE_SET, HID_XINPUT_STICK_R_Y[STICK_CONF_DEADZONE]);
     ControllerPatcherUtils::setConfigValue((uint8_t *) &config_controller[xinput_slot][CONTRPS_VPAD_BUTTON_R_STICK_Y_MINMAX], HID_XINPUT_STICK_R_Y[STICK_CONF_MIN], HID_XINPUT_STICK_R_Y[STICK_CONF_MAX]);
     ControllerPatcherUtils::setConfigValue((uint8_t *) &config_controller[xinput_slot][CONTRPS_VPAD_BUTTON_R_STICK_Y_INVERT], CONTROLLER_PATCHER_VALUE_SET, HID_XINPUT_STICK_R_Y[STICK_CONF_INVERT]);
+
+    ControllerPatcherUtils::normalizeStickAxisConfig();
 }
 
 CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcher::UpdateSamplingFunctionAddress() {
@@ -539,6 +541,7 @@ BOOL ControllerPatcher::Init(const char *pathToConfig) {
             DEBUG_FUNCTION_LINE("Done with reading config files from SD Card");
             gConfig_done = HID_SDCARD_READ;
         }
+        ControllerPatcherUtils::normalizeStickAxisConfig();
     }
 
     DEBUG_FUNCTION_LINE("Initializing the data for button remapping");
