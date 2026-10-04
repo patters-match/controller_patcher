@@ -218,7 +218,9 @@ enum Controller_Patcher_Settings {
     CONTRPS_VPAD_BUTTON_L_STICK_Y_SIGNED,
     CONTRPS_VPAD_BUTTON_R_STICK_X_SIGNED,
     CONTRPS_VPAD_BUTTON_R_STICK_Y_SIGNED,
-    
+
+    CONTRPS_REPORT_TIMEOUT, //! Treat a pad as disconnected after this many 10ms without a report. Only for devices that send reports continuously.
+
     CONTRPS_MAX_VALUE
 };
 /**

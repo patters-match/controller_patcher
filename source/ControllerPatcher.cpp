@@ -86,6 +86,7 @@ void ControllerPatcher::ResetConfig() {
     memset(gNetworkController, 0, sizeof(gNetworkController));                             // Init / Invalid everything
     memset(gHID_Devices, 0, sizeof(gHID_Devices));                                         // Init / Invalid everything
     memset(gHIDPadsWithData, 0, sizeof(gHIDPadsWithData));                                 // Init / Invalid everything
+    memset(gHIDLastReportTime, 0, sizeof(gHIDLastReportTime));                             // Init / Invalid everything
 
     memset(gWPADConnectCallback, 0, sizeof(gWPADConnectCallback));
     memset(gKPADConnectCallback, 0, sizeof(gKPADConnectCallback));

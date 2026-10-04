@@ -86,6 +86,7 @@ void ControllerPatcherHID::myHIDMouseReadCallback(uint32_t handle, int32_t error
 
         cur_mouse_data->valuedChanged = 1;
 
+        gHIDLastReportTime[usr->slotdata.deviceslot][slot] = OSGetTime();
         gHIDPadsWithData[usr->slotdata.deviceslot] |= (1 << slot);
         DCFlushRange(&gHIDPadsWithData[usr->slotdata.deviceslot], sizeof(gHIDPadsWithData[usr->slotdata.deviceslot]));
 
@@ -489,6 +490,7 @@ void ControllerPatcherHID::HIDReadCallback(uint32_t handle, unsigned char *buf, 
             DCFlushRange(&gHID_Devices[usr->slotdata.deviceslot].pad_data[slot], sizeof(HID_Data));
 
             if (usr->pad_slot < HID_MAX_PADS_COUNT) {
+                gHIDLastReportTime[usr->slotdata.deviceslot][usr->pad_slot] = OSGetTime();
                 gHIDPadsWithData[usr->slotdata.deviceslot] |= (1 << usr->pad_slot);
                 DCFlushRange(&gHIDPadsWithData[usr->slotdata.deviceslot], sizeof(gHIDPadsWithData[usr->slotdata.deviceslot]));
             }

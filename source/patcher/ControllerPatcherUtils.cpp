@@ -342,6 +342,14 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::checkActivePad(uint32
         // decode as input (e.g. full stick deflection for an axis centred at 0x80), and a wireless receiver
         // with no controller paired may never send one.
         if ((connected_pads & (1 << pad)) > 0 && (gHIDPadsWithData[deviceslot] & (1 << pad)) != 0) {
+            // A device that streams reports and then stops (e.g. a wireless pad dropping its link) leaves its last
+            // report in place, which would otherwise keep being used as input, including any held buttons.
+            if (config_controller[deviceslot][CONTRPS_REPORT_TIMEOUT][0] == CONTROLLER_PATCHER_VALUE_SET && pad < HID_MAX_PADS_COUNT) {
+                OSTime timeout = OSMillisecondsToTicks(config_controller[deviceslot][CONTRPS_REPORT_TIMEOUT][1] * 10);
+                if (timeout > 0 && OSGetTime() - gHIDLastReportTime[deviceslot][pad] > timeout) {
+                    return CONTROLLER_PATCHER_ERROR_NO_PAD_CONNECTED;
+                }
+            }
             return 1;
         }
     }
