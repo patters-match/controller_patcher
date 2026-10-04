@@ -338,7 +338,10 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::checkActivePad(uint32
         if (deviceslot < 0) return CONTROLLER_PATCHER_ERROR_DEVICE_SLOT_NOT_FOUND;
         int32_t connected_pads = config_controller[deviceslot][CONTRPS_CONNECTED_PADS][1];
 
-        if ((connected_pads & (1 << pad)) > 0) {
+        // A pad only counts once it has sent a report. Before that its data is zeroed memory, which can
+        // decode as input (e.g. full stick deflection for an axis centred at 0x80), and a wireless receiver
+        // with no controller paired may never send one.
+        if ((connected_pads & (1 << pad)) > 0 && (gHIDPadsWithData[deviceslot] & (1 << pad)) != 0) {
             return 1;
         }
     }

@@ -41,6 +41,7 @@ extern uint32_t gGamePadValues[CONTRPS_MAX_VALUE];
 
 extern uint8_t config_controller[gHIDMaxDevices][CONTRPS_MAX_VALUE][2];
 extern uint32_t config_controller_hidmask[gHIDMaxDevices];
+extern uint8_t gHIDPadsWithData[gHIDMaxDevices]; // Per device slot, a bit per pad slot that has delivered at least one report
 
 extern uint32_t gHID_LIST_GC;
 extern uint32_t gHID_LIST_DS3;

@@ -86,6 +86,9 @@ void ControllerPatcherHID::myHIDMouseReadCallback(uint32_t handle, int32_t error
 
         cur_mouse_data->valuedChanged = 1;
 
+        gHIDPadsWithData[usr->slotdata.deviceslot] |= (1 << slot);
+        DCFlushRange(&gHIDPadsWithData[usr->slotdata.deviceslot], sizeof(gHIDPadsWithData[usr->slotdata.deviceslot]));
+
         //DEBUG_FUNCTION_LINE("%02X %02X %02X %02X %02X %02X %02X %02X %d = X: %d Y: %d \n",buf[0],buf[1],buf[2],buf[3],buf[4],buf[5],buf[6],buf[7],bytes_transfered,x_value,y_value);
 
         HIDRead(handle, usr->buf, bytes_transfered, myHIDMouseReadCallback, usr);
@@ -209,6 +212,10 @@ int32_t ControllerPatcherHID::AttachDetachCallback(HIDClient *p_client, HIDDevic
             usr->pads_per_device = pads_per_device;
             usr->pad_slot        = pad_slot;
 
+            // Until its first report arrives, the pad's data is just zeroed memory, so don't treat it as input
+            gHIDPadsWithData[slotdata->deviceslot] &= ~(1 << pad_slot);
+            DCFlushRange(&gHIDPadsWithData[slotdata->deviceslot], sizeof(gHIDPadsWithData[slotdata->deviceslot]));
+
             for (int32_t i = 0; i < pads_per_device; i++) {
                 memset(&gHID_Devices[slotdata->deviceslot].pad_data[pad_slot + i], 0, sizeof(HID_Data));
 
@@ -307,6 +314,8 @@ int32_t ControllerPatcherHID::AttachDetachCallback(HIDClient *p_client, HIDDevic
 
             if (user_data) {
                 config_controller[slotdata->deviceslot][CONTRPS_CONNECTED_PADS][1] &= ~(1 << user_data->pad_slot);
+                gHIDPadsWithData[slotdata->deviceslot] &= ~(1 << user_data->pad_slot);
+                DCFlushRange(&gHIDPadsWithData[slotdata->deviceslot], sizeof(gHIDPadsWithData[slotdata->deviceslot]));
                 DCFlushRange(&config_controller[slotdata->deviceslot][CONTRPS_CONNECTED_PADS][1], sizeof(config_controller[slotdata->deviceslot][CONTRPS_CONNECTED_PADS][1]));
                 DCInvalidateRange(&config_controller[slotdata->deviceslot][CONTRPS_CONNECTED_PADS][1], sizeof(config_controller[slotdata->deviceslot][CONTRPS_CONNECTED_PADS][1]));
                 if (user_data->buf) {
@@ -478,6 +487,11 @@ void ControllerPatcherHID::HIDReadCallback(uint32_t handle, unsigned char *buf, 
             memcpy(&(data_ptr->data_union.controller.cur_hid_data[0]), &buf[0], dsize);                                             // save the new data.
 
             DCFlushRange(&gHID_Devices[usr->slotdata.deviceslot].pad_data[slot], sizeof(HID_Data));
+
+            if (usr->pad_slot < HID_MAX_PADS_COUNT) {
+                gHIDPadsWithData[usr->slotdata.deviceslot] |= (1 << usr->pad_slot);
+                DCFlushRange(&gHIDPadsWithData[usr->slotdata.deviceslot], sizeof(gHIDPadsWithData[usr->slotdata.deviceslot]));
+            }
 
             data_ptr = &(gHID_Devices[usr->slotdata.deviceslot].pad_data[slot]);
             ControllerPatcherUtils::doSampling(usr->slotdata.deviceslot, usr->pad_slot, false);
