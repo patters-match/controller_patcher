@@ -222,7 +222,7 @@ private:
 
         \return When the functions failed result < 0 is returned. If the result is >= 0 the function was successful.
     **/
-    static float convertAnalogValue(int32_t value, int32_t default_val, int32_t min, int32_t max, uint8_t invert,uint8_t deadzone);
+    static float convertAnalogValue(int32_t value, int32_t default_val, int32_t min, int32_t max, uint8_t invert, uint8_t deadzone);
     /**
         \brief Calculates a the stick data (VPADVec2D) from given digital direction.
 

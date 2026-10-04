@@ -366,10 +366,10 @@ int16_t ControllerPatcherUtils::signExtendValue(uint16_t input, uint8_t bit_leng
     // Check if the input is negative in its original bit length
     if (input & (1 << (bit_length - 1))) {
         // Sign-extend the value
-        return (int16_t)(input | (~((1 << bit_length) - 1)));
+        return (int16_t) (input | (~((1 << bit_length) - 1)));
     } else {
         // Input is non-negative; return it directly with proper casting
-        return (int16_t)input;
+        return (int16_t) input;
     }
 }
 
@@ -401,23 +401,23 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::normalizeStickValues(
     return CONTROLLER_PATCHER_ERROR_NONE;
 }
 
-float ControllerPatcherUtils::convertAnalogValue(int32_t value, int32_t default_val, int32_t min, int32_t max, uint8_t invert, uint8_t deadzone){
-    if(value >= max) return invert == 0x01 ? -1.0f : 1.0f;
-    if(value <= min) return invert == 0x01 ? 1.0f : -1.0f;
+float ControllerPatcherUtils::convertAnalogValue(int32_t value, int32_t default_val, int32_t min, int32_t max, uint8_t invert, uint8_t deadzone) {
+    if (value >= max) return invert == 0x01 ? -1.0f : 1.0f;
+    if (value <= min) return invert == 0x01 ? 1.0f : -1.0f;
 
-    int32_t range = 0;
+    int32_t range         = 0;
     int32_t adjustedValue = value - default_val;
 
-    if(std::abs(adjustedValue) <= (int32_t)deadzone) return 0.0f;
+    if (std::abs(adjustedValue) <= (int32_t) deadzone) return 0.0f;
 
-    if(adjustedValue > 0) {
+    if (adjustedValue > 0) {
         range = max - (default_val + deadzone);
         adjustedValue -= deadzone;
     } else {
         range = (default_val - deadzone) - min;
         adjustedValue += deadzone;
     }
-    float normalizedValue = (float)adjustedValue / range;
+    float normalizedValue = (float) adjustedValue / range;
     return invert == 0x01 ? -normalizedValue : normalizedValue;
 }
 
@@ -613,28 +613,28 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::convertAnalogSticks(H
 }
 
 CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::processStickAxis(
-    float &buffer_axis, const uint8_t *cur_data, int32_t deviceslot,
-    uint8_t axis_code, uint8_t axis_deadzone_code,
-    uint8_t axis_minmax_code, uint8_t axis_bit_length_code,
-    uint8_t axis_bit_offset_code, uint8_t axis_minmax_msb_code,
-    uint8_t axis_default_msb_code, uint8_t axis_signed_code,
-    uint8_t axis_invert_code) {
+        float &buffer_axis, const uint8_t *cur_data, int32_t deviceslot,
+        uint8_t axis_code, uint8_t axis_deadzone_code,
+        uint8_t axis_minmax_code, uint8_t axis_bit_length_code,
+        uint8_t axis_bit_offset_code, uint8_t axis_minmax_msb_code,
+        uint8_t axis_default_msb_code, uint8_t axis_signed_code,
+        uint8_t axis_invert_code) {
 
     if (cur_data == NULL) return CONTROLLER_PATCHER_ERROR_NULL_POINTER;
 
     if (config_controller[deviceslot][axis_code][0] != CONTROLLER_PATCHER_INVALIDVALUE) {
-        uint8_t deadzone = (config_controller[deviceslot][axis_deadzone_code][0] == CONTROLLER_PATCHER_VALUE_SET) 
-                           ? config_controller[deviceslot][axis_deadzone_code][1] 
-                           : 0;
+        uint8_t deadzone = (config_controller[deviceslot][axis_deadzone_code][0] == CONTROLLER_PATCHER_VALUE_SET)
+                                   ? config_controller[deviceslot][axis_deadzone_code][1]
+                                   : 0;
 
         // Read 1st byte of axis HID data & Min/Max/Default values
-        uint16_t axis_input = cur_data[config_controller[deviceslot][axis_code][0]];
-        uint16_t axis_min = config_controller[deviceslot][axis_minmax_code][0];
-        uint16_t axis_max = config_controller[deviceslot][axis_minmax_code][1];
+        uint16_t axis_input   = cur_data[config_controller[deviceslot][axis_code][0]];
+        uint16_t axis_min     = config_controller[deviceslot][axis_minmax_code][0];
+        uint16_t axis_max     = config_controller[deviceslot][axis_minmax_code][1];
         uint16_t axis_default = config_controller[deviceslot][axis_code][1];
 
         // Axis report larger than 8 bits?
-        if (config_controller[deviceslot][axis_bit_length_code][0] == CONTROLLER_PATCHER_VALUE_SET && 
+        if (config_controller[deviceslot][axis_bit_length_code][0] == CONTROLLER_PATCHER_VALUE_SET &&
             config_controller[deviceslot][axis_bit_length_code][1] > 8) {
 
             // Read 2nd byte of axis HID data
@@ -659,10 +659,10 @@ CONTROLLER_PATCHER_RESULT_OR_ERROR ControllerPatcherUtils::processStickAxis(
         if (config_controller[deviceslot][axis_signed_code][1]) {
             // Extend sign bits if axis HID data is signed
             int16_t signed_input = signExtendValue(axis_input, config_controller[deviceslot][axis_bit_length_code][1]);
-            buffer_axis += convertAnalogValue(signed_input, (int16_t)axis_default, (int16_t)axis_min, (int16_t)axis_max,
+            buffer_axis += convertAnalogValue(signed_input, (int16_t) axis_default, (int16_t) axis_min, (int16_t) axis_max,
                                               config_controller[deviceslot][axis_invert_code][1], deadzone);
         } else {
-            buffer_axis += convertAnalogValue(axis_input, axis_default, axis_min, axis_max, 
+            buffer_axis += convertAnalogValue(axis_input, axis_default, axis_min, axis_max,
                                               config_controller[deviceslot][axis_invert_code][1], deadzone);
         }
     }
